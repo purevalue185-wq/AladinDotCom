@@ -1,5 +1,5 @@
 // ==========================================
-// ALADINDOTCOM - MAIN SCRIPT
+// ALADINDOTCOM - MAIN HOMEPAGE SCRIPT
 // ==========================================
 
 let currentUser = null;
@@ -50,16 +50,12 @@ function updateUI() {
 // LOAD PRODUCTS FROM FIREBASE
 // ==========================================
 function loadProducts() {
-  const productsRef = database.ref('products');
-  
-  productsRef.on('value', (snapshot) => {
+  database.ref('products').on('value', (snapshot) => {
     const data = snapshot.val();
     products = data ? Object.values(data) : [];
     console.log('Products loaded:', products.length);
     renderCategories();
-    renderProducts();
-  }, (error) => {
-    console.error('Error loading products:', error);
+    renderFeaturedProducts(); // Only show 3 products
   });
 }
 
@@ -80,7 +76,7 @@ function renderCategories() {
   ];
 
   grid.innerHTML = categories.map(c => `
-    <div class="category-card" onclick="filterByCategory('${c.slug}')">
+    <div class="category-card" onclick="goToCategory('${c.slug}')">
       <i class="fas ${c.icon} category-icon"></i>
       <h3>${c.name}</h3>
     </div>
@@ -88,25 +84,26 @@ function renderCategories() {
 }
 
 // ==========================================
-// RENDER PRODUCTS - WITH CLICKABLE CARDS
+// RENDER ONLY 3 FEATURED PRODUCTS
 // ==========================================
-function renderProducts(filteredProducts = null) {
+function renderFeaturedProducts() {
   const container = document.getElementById('productsContainer');
   if (!container) return;
 
-  const displayProducts = filteredProducts || products.slice(0, 6);
+  // Show ONLY first 3 products
+  const featuredProducts = products.slice(0, 3);
 
-  if (displayProducts.length === 0) {
+  if (featuredProducts.length === 0) {
     container.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:3rem;">
         <i class="fas fa-box-open" style="font-size:3rem;color:var(--gray-600);"></i>
-        <h3 style="margin-top:1rem;">No Products Found</h3>
+        <h3 style="margin-top:1rem;">No Products Yet</h3>
         <p>Check back soon for new wholesale products!</p>
       </div>`;
     return;
   }
 
-  container.innerHTML = displayProducts.map(p => `
+  container.innerHTML = featuredProducts.map(p => `
     <div class="product-card" onclick="goToProductDetail('${p.id}')" style="cursor:pointer;">
       <div class="product-img">${p.img || '📦'}</div>
       <div class="product-info">
@@ -114,258 +111,105 @@ function renderProducts(filteredProducts = null) {
         <div class="product-title">${p.title}</div>
         <div class="rating">
           ${'★'.repeat(Math.floor(p.rating || 0))}${(p.rating || 0) % 1 >= 0.5 ? '½' : ''} 
-          <span style="color:var(--gray-600);">(${p.reviews || 0} reviews)</span>
+          <span style="color:var(--gray-600);">(${p.reviews || 0})</span>
         </div>
-        <div class="price-range">${p.price || 'Contact for Best Price'}</div>
-        <p style="font-size:0.85rem;color:var(--gray-600);">Supplier: ${p.supplier || 'Verified Supplier'}</p>
-        <p style="font-size:0.85rem;color:var(--gray-600);">Shipping: ${p.shipping || 'Worldwide'}</p>
-        
-        <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem;">
-          <button class="btn btn-primary btn-full" onclick="event.stopPropagation();goToProductDetail('${p.id}')">
-            <i class="fas fa-eye"></i> View Details
-          </button>
-          <button class="btn btn-accent btn-full" onclick="event.stopPropagation();orderViaWhatsApp('${p.id}', '${escapeString(p.title)}')">
-            <i class="fab fa-whatsapp"></i> Order via WhatsApp
-          </button>
-        </div>
+        <div class="price-range">${p.price || 'Contact for Price'}</div>
+        <button class="btn btn-primary btn-full" onclick="event.stopPropagation();goToProductDetail('${p.id}')">
+          <i class="fas fa-eye"></i> View Details
+        </button>
+        <button class="btn btn-accent btn-full" onclick="event.stopPropagation();orderWhatsApp('${p.id}', '${escapeStr(p.title)}')" style="margin-top:0.5rem;">
+          <i class="fab fa-whatsapp"></i> Order Now
+        </button>
       </div>
     </div>
   `).join('');
 }
 
 // ==========================================
-// GO TO PRODUCT DETAIL PAGE
+// NAVIGATION FUNCTIONS
 // ==========================================
 function goToProductDetail(productId) {
   window.location.href = 'product-detail.html?id=' + productId;
 }
 
-// ==========================================
-// HELPER: Escape string for JS
-// ==========================================
-function escapeString(str) {
-  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+function goToCategory(category) {
+  window.location.href = 'products.html?category=' + category;
 }
 
-// ==========================================
-// FILTER BY CATEGORY
-// ==========================================
-function filterByCategory(category) {
-  // Go to products page with category filter
-  window.location.href = 'products.html?category=' + category;
+function goToAllProducts() {
+  window.location.href = 'products.html';
 }
 
 // ==========================================
 // ORDER VIA WHATSAPP
 // ==========================================
-function orderViaWhatsApp(productId, productTitle) {
-  const phoneNumber = '15551234567'; // 👈 CHANGE THIS TO YOUR WHATSAPP NUMBER
-  const userName = currentUser ? (currentUser.displayName || currentUser.email) : 'Guest Customer';
+function orderWhatsApp(productId, productTitle) {
+  const phoneNumber = '15551234567'; // 👈 CHANGE TO YOUR NUMBER
+  const userName = currentUser ? (currentUser.displayName || currentUser.email) : 'Guest';
   const userEmail = currentUser ? currentUser.email : 'Not logged in';
   
-  const message = `🛒 *New Wholesale Order*\n\n` +
-    `📦 *Product:* ${productTitle}\n` +
-    `🆔 *Product ID:* ${productId}\n` +
-    `👤 *Customer:* ${userName}\n` +
-    `📧 *Email:* ${userEmail}\n\n` +
-    `Please send me:\n` +
-    `- Bulk pricing details\n` +
-    `- MOQ information\n` +
-    `- Shipping cost & time\n\n` +
-    `Thank you! 🙏`;
+  const message = `🛒 *New Order*\n\n📦 ${productTitle}\n🆔 ID: ${productId}\n👤 ${userName}\n📧 ${userEmail}\n\nPlease send bulk pricing.`;
   
-  // Save order to Firebase
   database.ref('orders').push({
-    productId: productId,
-    productTitle: productTitle,
-    userName: userName,
-    userEmail: userEmail,
+    productId, productTitle, userName, userEmail,
     userId: currentUser ? currentUser.uid : 'guest',
     status: 'new',
     createdAt: firebase.database.ServerValue.TIMESTAMP
-  }).then(() => {
-    console.log('Order saved to database');
-  }).catch(error => {
-    console.error('Error saving order:', error);
   });
   
-  // Open WhatsApp
-  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappURL, '_blank');
+  window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
 // ==========================================
-// LOGIN FUNCTIONS
+// HELPER
+// ==========================================
+function escapeStr(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ==========================================
+// LOGIN / SIGNUP
 // ==========================================
 function loginWithEmail() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-
-  if (!email || !password) {
-    alert('Please fill in all fields.');
-    return;
-  }
-
+  if (!email || !password) return alert('Fill all fields');
+  
   auth.signInWithEmailAndPassword(email, password)
-    .then((result) => {
+    .then(() => {
       closeModal('loginModal');
-      document.getElementById('loginEmail').value = '';
-      document.getElementById('loginPassword').value = '';
-      
-      if (email === 'purevalue185@gmail.com') {
-        window.location.href = 'admin.html';
-      } else {
-        alert('Welcome! You can now place orders.');
-      }
+      if (email === 'purevalue185@gmail.com') window.location.href = 'admin.html';
     })
-    .catch((error) => {
-      alert('Login failed: ' + error.message);
-    });
+    .catch(e => alert('Error: ' + e.message));
 }
 
 function signupWithEmail() {
   const name = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
-
-  if (!name || !email || !password) {
-    alert('Please fill in all fields.');
-    return;
-  }
-
-  if (password.length < 6) {
-    alert('Password must be at least 6 characters.');
-    return;
-  }
-
+  if (!name || !email || !password) return alert('Fill all fields');
+  if (password.length < 6) return alert('Password 6+ characters');
+  
   auth.createUserWithEmailAndPassword(email, password)
-    .then((result) => {
-      return result.user.updateProfile({ displayName: name });
-    })
-    .then(() => {
-      closeModal('signupModal');
-      document.getElementById('signupName').value = '';
-      document.getElementById('signupEmail').value = '';
-      document.getElementById('signupPassword').value = '';
-      alert('Account created successfully! Welcome to AladinDotCom!');
-    })
-    .catch((error) => {
-      alert('Signup failed: ' + error.message);
-    });
+    .then(r => r.user.updateProfile({ displayName: name }))
+    .then(() => { closeModal('signupModal'); alert('Account created!'); })
+    .catch(e => alert('Error: ' + e.message));
 }
 
 function loginWithGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  
-  auth.signInWithPopup(provider)
-    .then(() => {
-      closeModal('loginModal');
-      alert('Welcome! You can now place orders.');
-    })
-    .catch((error) => {
-      if (error.code === 'auth/unauthorized-domain') {
-        alert('Google login is not available on this domain. Please use Email/Password login instead.');
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        // User closed popup, do nothing
-      } else {
-        alert('Error: ' + error.message);
-      }
-    });
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(() => closeModal('loginModal'))
+    .catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); });
 }
 
 function signupWithGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  
-  auth.signInWithPopup(provider)
-    .then(() => {
-      closeModal('signupModal');
-      alert('Account created! Welcome to AladinDotCom!');
-    })
-    .catch((error) => {
-      if (error.code === 'auth/unauthorized-domain') {
-        alert('Google signup is not available on this domain. Please use Email/Password signup instead.');
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        // User closed popup, do nothing
-      } else {
-        alert('Error: ' + error.message);
-      }
-    });
-}
-
-// ==========================================
-// PHONE LOGIN
-// ==========================================
-let phoneVerificationId = null;
-
-function loginWithPhone() {
-  closeModal('loginModal');
-  openModal('phoneModal');
-  
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      size: 'normal',
-      callback: () => {
-        console.log('reCAPTCHA solved');
-      }
-    });
-    window.recaptchaVerifier.render();
-  }
-}
-
-function sendPhoneCode() {
-  const phoneNumber = document.getElementById('phoneNumber').value.trim();
-  
-  if (!phoneNumber) {
-    alert('Please enter your phone number.');
-    return;
-  }
-
-  const appVerifier = window.recaptchaVerifier;
-  
-  auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-    .then((confirmationResult) => {
-      phoneVerificationId = confirmationResult.verificationId;
-      document.getElementById('sendCodeBtn').style.display = 'none';
-      document.getElementById('codeSection').style.display = 'block';
-      alert('Verification code sent to ' + phoneNumber);
-    })
-    .catch((error) => {
-      alert('Error: ' + error.message);
-    });
-}
-
-function verifyPhoneCode() {
-  const code = document.getElementById('verificationCode').value.trim();
-  
-  if (!code) {
-    alert('Please enter the verification code.');
-    return;
-  }
-
-  const credential = firebase.auth.PhoneAuthProvider.credential(phoneVerificationId, code);
-  
-  auth.signInWithCredential(credential)
-    .then(() => {
-      closeModal('phoneModal');
-      document.getElementById('phoneNumber').value = '';
-      document.getElementById('verificationCode').value = '';
-      document.getElementById('sendCodeBtn').style.display = 'block';
-      document.getElementById('codeSection').style.display = 'none';
-      alert('Phone verified! Welcome!');
-    })
-    .catch((error) => {
-      alert('Invalid code: ' + error.message);
-    });
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(() => closeModal('signupModal'))
+    .catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); });
 }
 
 function logout() {
-  auth.signOut()
-    .then(() => {
-      alert('Logged out successfully.');
-    })
-    .catch((error) => {
-      console.error('Logout error:', error);
-    });
+  auth.signOut().then(() => alert('Logged out'));
 }
 
 // ==========================================
@@ -375,26 +219,16 @@ document.getElementById('sendInquiryBtn')?.addEventListener('click', () => {
   const name = document.getElementById('contactName').value.trim();
   const email = document.getElementById('contactEmail').value.trim();
   const message = document.getElementById('contactMessage').value.trim();
-
-  if (!name || !email || !message) {
-    alert('Please fill in all fields.');
-    return;
-  }
-
+  if (!name || !email || !message) return alert('Fill all fields');
+  
   database.ref('inquiries').push({
-    name: name,
-    email: email,
-    message: message,
-    status: 'new',
+    name, email, message, status: 'new',
     createdAt: firebase.database.ServerValue.TIMESTAMP
   }).then(() => {
-    alert('Thank you! Your message has been sent. We will reply within 24 hours.');
+    alert('Message sent!');
     document.getElementById('contactName').value = '';
     document.getElementById('contactEmail').value = '';
     document.getElementById('contactMessage').value = '';
-  }).catch((error) => {
-    alert('Error sending message. Please try again.');
-    console.error('Error:', error);
   });
 });
 
@@ -402,28 +236,13 @@ document.getElementById('sendInquiryBtn')?.addEventListener('click', () => {
 // SEARCH
 // ==========================================
 document.getElementById('heroSearchBtn')?.addEventListener('click', () => {
-  const query = document.getElementById('heroSearchInput').value.trim().toLowerCase();
-  
-  if (!query) {
-    renderProducts();
-    return;
-  }
-
-  const filtered = products.filter(p => 
-    (p.title && p.title.toLowerCase().includes(query)) ||
-    (p.category && p.category.toLowerCase().includes(query)) ||
-    (p.desc && p.desc.toLowerCase().includes(query))
-  );
-  
-  renderProducts(filtered);
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  const q = document.getElementById('heroSearchInput').value.trim();
+  if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
 });
 
 document.getElementById('navSearchBtn')?.addEventListener('click', () => {
-  const query = document.getElementById('navSearch').value.trim();
-  if (query) {
-    window.location.href = 'products.html?search=' + encodeURIComponent(query);
-  }
+  const q = document.getElementById('navSearch').value.trim();
+  if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
 });
 
 // ==========================================
@@ -433,56 +252,15 @@ document.getElementById('hamburgerBtn')?.addEventListener('click', () => {
   document.getElementById('navLinks').classList.toggle('show');
 });
 
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    document.getElementById('navLinks').classList.remove('show');
-  });
-});
-
-// ==========================================
-// CLOSE MODALS
-// ==========================================
+// Close modals
 document.querySelectorAll('.modal').forEach(modal => {
   modal.addEventListener('click', function(e) {
-    if (e.target === this) {
-      this.classList.remove('active');
-    }
+    if (e.target === this) this.classList.remove('active');
   });
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal.active').forEach(modal => {
-      modal.classList.remove('active');
-    });
-  }
-});
-
 // ==========================================
-// SWITCH BETWEEN LOGIN/SIGNUP
-// ==========================================
-document.getElementById('switchToSignup')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  closeModal('loginModal');
-  openModal('signupModal');
-});
-
-document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  closeModal('signupModal');
-  openModal('loginModal');
-});
-
-// ==========================================
-// INITIALIZE
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('AladinDotCom initialized');
-  loadProducts();
-});
-
-// ==========================================
-// MAKE FUNCTIONS GLOBAL
+// GLOBAL FUNCTIONS
 // ==========================================
 window.openModal = openModal;
 window.closeModal = closeModal;
@@ -490,10 +268,16 @@ window.loginWithEmail = loginWithEmail;
 window.signupWithEmail = signupWithEmail;
 window.loginWithGoogle = loginWithGoogle;
 window.signupWithGoogle = signupWithGoogle;
-window.loginWithPhone = loginWithPhone;
-window.sendPhoneCode = sendPhoneCode;
-window.verifyPhoneCode = verifyPhoneCode;
 window.logout = logout;
-window.orderViaWhatsApp = orderViaWhatsApp;
-window.filterByCategory = filterByCategory;
 window.goToProductDetail = goToProductDetail;
+window.goToCategory = goToCategory;
+window.goToAllProducts = goToAllProducts;
+window.orderWhatsApp = orderWhatsApp;
+
+// ==========================================
+// INITIALIZE
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('AladinDotCom Homepage Ready');
+  loadProducts();
+});
