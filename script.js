@@ -88,7 +88,7 @@ function renderCategories() {
 }
 
 // ==========================================
-// RENDER PRODUCTS
+// RENDER PRODUCTS - WITH CLICKABLE CARDS
 // ==========================================
 function renderProducts(filteredProducts = null) {
   const container = document.getElementById('productsContainer');
@@ -107,7 +107,7 @@ function renderProducts(filteredProducts = null) {
   }
 
   container.innerHTML = displayProducts.map(p => `
-    <div class="product-card">
+    <div class="product-card" onclick="goToProductDetail('${p.id}')" style="cursor:pointer;">
       <div class="product-img">${p.img || '📦'}</div>
       <div class="product-info">
         <span class="moq-badge">${p.moq || 'MOQ Available'}</span>
@@ -121,16 +121,23 @@ function renderProducts(filteredProducts = null) {
         <p style="font-size:0.85rem;color:var(--gray-600);">Shipping: ${p.shipping || 'Worldwide'}</p>
         
         <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem;">
-          <button class="btn btn-accent btn-full" onclick="orderViaWhatsApp('${p.id}', '${escapeString(p.title)}')">
-            <i class="fab fa-whatsapp"></i> Order via WhatsApp
+          <button class="btn btn-primary btn-full" onclick="event.stopPropagation();goToProductDetail('${p.id}')">
+            <i class="fas fa-eye"></i> View Details
           </button>
-          <button class="btn btn-outline btn-full" onclick="inquiryViaEmail('${escapeString(p.title)}')">
-            <i class="far fa-envelope"></i> Inquire via Email
+          <button class="btn btn-accent btn-full" onclick="event.stopPropagation();orderViaWhatsApp('${p.id}', '${escapeString(p.title)}')">
+            <i class="fab fa-whatsapp"></i> Order via WhatsApp
           </button>
         </div>
       </div>
     </div>
   `).join('');
+}
+
+// ==========================================
+// GO TO PRODUCT DETAIL PAGE
+// ==========================================
+function goToProductDetail(productId) {
+  window.location.href = 'product-detail.html?id=' + productId;
 }
 
 // ==========================================
@@ -144,9 +151,8 @@ function escapeString(str) {
 // FILTER BY CATEGORY
 // ==========================================
 function filterByCategory(category) {
-  const filtered = products.filter(p => p.category === category);
-  renderProducts(filtered);
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  // Go to products page with category filter
+  window.location.href = 'products.html?category=' + category;
 }
 
 // ==========================================
@@ -189,25 +195,6 @@ function orderViaWhatsApp(productId, productTitle) {
 }
 
 // ==========================================
-// INQUIRE VIA EMAIL
-// ==========================================
-function inquiryViaEmail(productTitle) {
-  const emailAddress = 'support@aladindotcom.com'; // 👈 CHANGE THIS TO YOUR EMAIL
-  const subject = `Wholesale Inquiry: ${productTitle}`;
-  const body = `Hi AladinDotCom Team,\n\n` +
-    `I am interested in purchasing:\n` +
-    `Product: ${productTitle}\n\n` +
-    `Please send me:\n` +
-    `- Bulk pricing\n` +
-    `- MOQ details\n` +
-    `- Shipping information\n\n` +
-    `Thank you!`;
-  
-  const mailtoURL = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.location.href = mailtoURL;
-}
-
-// ==========================================
 // LOGIN FUNCTIONS
 // ==========================================
 function loginWithEmail() {
@@ -222,11 +209,9 @@ function loginWithEmail() {
   auth.signInWithEmailAndPassword(email, password)
     .then((result) => {
       closeModal('loginModal');
-      // Clear fields
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPassword').value = '';
       
-      // If admin, redirect to admin panel
       if (email === 'purevalue185@gmail.com') {
         window.location.href = 'admin.html';
       } else {
@@ -238,9 +223,6 @@ function loginWithEmail() {
     });
 }
 
-// ==========================================
-// SIGNUP FUNCTIONS
-// ==========================================
 function signupWithEmail() {
   const name = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
@@ -262,7 +244,6 @@ function signupWithEmail() {
     })
     .then(() => {
       closeModal('signupModal');
-      // Clear fields
       document.getElementById('signupName').value = '';
       document.getElementById('signupEmail').value = '';
       document.getElementById('signupPassword').value = '';
@@ -273,9 +254,6 @@ function signupWithEmail() {
     });
 }
 
-// ==========================================
-// GOOGLE LOGIN
-// ==========================================
 function loginWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   
@@ -295,9 +273,6 @@ function loginWithGoogle() {
     });
 }
 
-// ==========================================
-// GOOGLE SIGNUP
-// ==========================================
 function signupWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   
@@ -326,7 +301,6 @@ function loginWithPhone() {
   closeModal('loginModal');
   openModal('phoneModal');
   
-  // Initialize reCAPTCHA
   if (!window.recaptchaVerifier) {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       size: 'normal',
@@ -384,9 +358,6 @@ function verifyPhoneCode() {
     });
 }
 
-// ==========================================
-// LOGOUT
-// ==========================================
 function logout() {
   auth.signOut()
     .then(() => {
@@ -449,20 +420,10 @@ document.getElementById('heroSearchBtn')?.addEventListener('click', () => {
 });
 
 document.getElementById('navSearchBtn')?.addEventListener('click', () => {
-  const query = document.getElementById('navSearch').value.trim().toLowerCase();
-  
-  if (!query) {
-    renderProducts();
-    return;
+  const query = document.getElementById('navSearch').value.trim();
+  if (query) {
+    window.location.href = 'products.html?search=' + encodeURIComponent(query);
   }
-
-  const filtered = products.filter(p => 
-    (p.title && p.title.toLowerCase().includes(query)) ||
-    (p.category && p.category.toLowerCase().includes(query))
-  );
-  
-  renderProducts(filtered);
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 });
 
 // ==========================================
@@ -472,7 +433,6 @@ document.getElementById('hamburgerBtn')?.addEventListener('click', () => {
   document.getElementById('navLinks').classList.toggle('show');
 });
 
-// Close mobile menu when clicking a link
 document.querySelectorAll('.nav-links a').forEach(link => {
   link.addEventListener('click', () => {
     document.getElementById('navLinks').classList.remove('show');
@@ -480,7 +440,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ==========================================
-// CLOSE MODALS ON OUTSIDE CLICK
+// CLOSE MODALS
 // ==========================================
 document.querySelectorAll('.modal').forEach(modal => {
   modal.addEventListener('click', function(e) {
@@ -490,7 +450,6 @@ document.querySelectorAll('.modal').forEach(modal => {
   });
 });
 
-// Close modals with Escape key
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     document.querySelectorAll('.modal.active').forEach(modal => {
@@ -536,5 +495,5 @@ window.sendPhoneCode = sendPhoneCode;
 window.verifyPhoneCode = verifyPhoneCode;
 window.logout = logout;
 window.orderViaWhatsApp = orderViaWhatsApp;
-window.inquiryViaEmail = inquiryViaEmail;
 window.filterByCategory = filterByCategory;
+window.goToProductDetail = goToProductDetail;
