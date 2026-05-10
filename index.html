@@ -16,6 +16,7 @@
         <a href="index.html">Home</a>
         <a href="#categories">Categories</a>
         <a href="#products">Products</a>
+        <a href="products.html">All Products</a>
         <a href="#contact">Contact</a>
         <div class="search-bar">
           <input type="text" placeholder="Search..." id="navSearch">
@@ -33,14 +34,14 @@
     <div class="container hero-grid">
       <div class="hero-content">
         <h1>Global Bulk Import,<br>Simplified & Direct</h1>
-        <p>Source premium wholesale products. Sign up to see prices & place orders!</p>
+        <p>Source premium wholesale products from verified suppliers worldwide.</p>
         <div class="hero-search">
           <input type="text" placeholder="Search products..." id="heroSearchInput">
-          <button class="btn btn-primary" id="heroSearchBtn"><i class="fas fa-search"></i></button>
+          <button class="btn btn-primary" id="heroSearchBtn"><i class="fas fa-search"></i> Search</button>
         </div>
         <div class="hero-buttons">
-          <button class="btn btn-accent" onclick="openModal('signupModal')"><i class="fas fa-user-plus"></i> Register to Buy</button>
-          <a href="#products" class="btn btn-outline">View Products</a>
+          <a href="products.html" class="btn btn-accent"><i class="fas fa-shopping-cart"></i> Shop Now</a>
+          <a href="#categories" class="btn btn-outline">Browse Categories</a>
         </div>
       </div>
       <div class="hero-illustration"></div>
@@ -48,13 +49,28 @@
   </section>
 
   <section class="container section-padding" id="categories">
-    <div class="section-title"><h2>Popular Categories</h2></div>
+    <div class="section-title"><h2>Popular Categories</h2><p>Click to browse products</p></div>
     <div class="categories-grid" id="categoriesGrid"></div>
   </section>
 
   <section class="container section-padding" id="products">
-    <div class="section-title"><h2>Featured Products</h2></div>
+    <div class="section-title"><h2>Featured Products</h2><p>Latest wholesale deals</p></div>
     <div class="products-grid" id="productsContainer"></div>
+    <div class="text-center" style="margin-top:2.5rem;">
+      <a href="products.html" class="btn btn-primary btn-large">
+        <i class="fas fa-th-large"></i> View All Products
+      </a>
+    </div>
+  </section>
+
+  <section class="container section-padding" id="why">
+    <div class="section-title"><h2>Why AladinDotCom</h2></div>
+    <div class="why-grid">
+      <div class="why-card"><i class="fas fa-tags fa-2x icon-blue"></i><h3>Direct Pricing</h3><p>Save up to 40%</p></div>
+      <div class="why-card"><i class="fas fa-layer-group fa-2x icon-blue"></i><h3>Bulk Discounts</h3><p>More you buy, less you pay</p></div>
+      <div class="why-card"><i class="fas fa-shipping-fast fa-2x icon-blue"></i><h3>Fast Shipping</h3><p>7-18 days worldwide</p></div>
+      <div class="why-card"><i class="fas fa-shield-alt fa-2x icon-blue"></i><h3>Trusted</h3><p>Verified suppliers</p></div>
+    </div>
   </section>
 
   <section class="container section-padding" id="contact">
@@ -76,25 +92,24 @@
   <footer>
     <div class="container footer-container">
       <div><strong>AladinDotCom</strong><p>Premium wholesale marketplace</p></div>
-      <div class="footer-links"><a href="#">Products</a><a href="#contact">Contact</a></div>
+      <div class="footer-links"><a href="products.html">All Products</a><a href="#contact">Contact</a></div>
     </div>
-    <div class="container copyright"><p>&copy; 2025 AladinDotCom. All rights reserved.</p></div>
+    <div class="container copyright"><p>&copy; 2025 AladinDotCom</p></div>
   </footer>
 
   <!-- Login Modal -->
   <div class="modal" id="loginModal">
     <div class="modal-content">
       <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-      <h2>Login to Your Account</h2>
+      <h2>Login</h2>
       <div class="auth-form">
-        <input type="email" id="loginEmail" placeholder="Email address">
+        <input type="email" id="loginEmail" placeholder="Email">
         <input type="password" id="loginPassword" placeholder="Password">
         <button class="btn btn-primary btn-full" onclick="loginWithEmail()">Login</button>
         <div class="divider"><span>or</span></div>
-        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Login with Google</button>
-        <button class="btn btn-outline btn-full" onclick="loginWithPhone()"><i class="fas fa-phone"></i> Login with Phone</button>
+        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
       </div>
-      <p style="text-align:center;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')">Sign Up</a></p>
+      <p style="text-align:center;margin-top:1rem;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')">Sign Up</a></p>
     </div>
   </div>
 
@@ -102,31 +117,16 @@
   <div class="modal" id="signupModal">
     <div class="modal-content">
       <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
-      <h2>Create Account</h2>
+      <h2>Sign Up</h2>
       <div class="auth-form">
         <input type="text" id="signupName" placeholder="Full Name">
-        <input type="email" id="signupEmail" placeholder="Email address">
-        <input type="password" id="signupPassword" placeholder="Password (6+ characters)">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
         <button class="btn btn-primary btn-full" onclick="signupWithEmail()">Create Account</button>
         <div class="divider"><span>or</span></div>
-        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Sign Up with Google</button>
+        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
       </div>
-      <p style="text-align:center;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')">Login</a></p>
-    </div>
-  </div>
-
-  <!-- Phone Modal -->
-  <div class="modal" id="phoneModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal('phoneModal')">&times;</span>
-      <h2>Phone Login</h2>
-      <div id="recaptcha-container"></div>
-      <input type="tel" id="phoneNumber" placeholder="+1234567890" style="width:100%;padding:0.8rem;margin:1rem 0;border:1px solid #ddd;border-radius:0.5rem;">
-      <button class="btn btn-primary btn-full" id="sendCodeBtn" onclick="sendPhoneCode()">Send Code</button>
-      <div id="codeSection" style="display:none;margin-top:1rem;">
-        <input type="text" id="verificationCode" placeholder="Enter 6-digit code" style="width:100%;padding:0.8rem;border:1px solid #ddd;border-radius:0.5rem;">
-        <button class="btn btn-primary btn-full" style="margin-top:0.5rem;" onclick="verifyPhoneCode()">Verify</button>
-      </div>
+      <p style="text-align:center;margin-top:1rem;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')">Login</a></p>
     </div>
   </div>
 
