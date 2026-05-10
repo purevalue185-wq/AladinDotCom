@@ -2,41 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products | AladinDotCom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+  <meta name="description" content="Browse all wholesale products at AladinDotCom">
+  <title>All Products | AladinDotCom</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo">Aladin<span>DotCom</span></a>
-      <div class="nav-links">
+      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+      <div class="nav-links" id="navLinks">
         <a href="index.html">Home</a>
+        <a href="#categories">Categories</a>
         <a href="products.html">Products</a>
+        <a href="index.html#contact">Contact</a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search products..." id="productSearchInput">
+          <button id="productSearchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <span id="userDisplay" style="display:none;font-weight:600;color:var(--secondary);"></span>
+        <button class="btn login-btn" id="loginBtn" onclick="openModal('loginModal')">Login</button>
+        <button class="btn btn-primary" id="signupBtn" onclick="openModal('signupModal')">Sign Up</button>
+        <button class="btn btn-outline" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
       </div>
     </div>
   </nav>
+
+  <!-- Products Section -->
   <section class="container section-padding">
-    <h2>All Products</h2>
-    <div class="products-grid" id="allProducts"></div>
+    <div class="products-header">
+      <h2>All Wholesale Products</h2>
+      <p>Browse our complete catalog of bulk import products</p>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="category-filter" id="categoryFilter">
+      <button class="filter-btn active" data-category="all">All Products</button>
+      <button class="filter-btn" data-category="electronics">Electronics</button>
+      <button class="filter-btn" data-category="kitchen">Kitchen Items</button>
+      <button class="filter-btn" data-category="beauty">Beauty Products</button>
+      <button class="filter-btn" data-category="household">Household</button>
+      <button class="filter-btn" data-category="packaging">Packaging</button>
+      <button class="filter-btn" data-category="industrial">Industrial</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="allProductsContainer">
+      <div style="text-align:center;grid-column:1/-1;padding:3rem;">
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--secondary);"></i>
+        <p>Loading products...</p>
+      </div>
+    </div>
   </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <strong>AladinDotCom</strong>
+        <p>Your premium wholesale import partner</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">All Products</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="container copyright">
+      <p>&copy; 2025 AladinDotCom. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Login</h2>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="btn btn-primary btn-full" onclick="loginWithEmail()">Login</button>
+        <div class="divider"><span>or</span></div>
+        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
+      </div>
+      <p style="text-align:center;margin-top:1rem;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal" id="signupModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
+      <h2>Sign Up</h2>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <button class="btn btn-primary btn-full" onclick="signupWithEmail()">Create Account</button>
+        <div class="divider"><span>or</span></div>
+        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
+      </div>
+      <p style="text-align:center;margin-top:1rem;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')">Login</a></p>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
-  <script>
-    database.ref('products').once('value').then(s => {
-      const prods = s.val() ? Object.values(s.val()) : [];
-      document.getElementById('allProducts').innerHTML = prods.map(p => `
-        <div class="product-card" onclick="location.href='product-detail.html?id=${p.id}'">
-          <div class="product-img">${p.img||'📦'}</div>
-          <div class="product-info">
-            <div class="product-title">${p.title}</div>
-            <div class="price-range">${p.price||''}</div>
-          </div>
-        </div>
-      `).join('');
-    });
-  </script>
+  <script src="products.js"></script>
 </body>
 </html>
