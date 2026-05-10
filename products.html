@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products | AladinDotCom</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">Aladin<span>DotCom</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+      </div>
+    </div>
+  </nav>
+  <section class="container section-padding">
+    <h2>All Products</h2>
+    <div class="products-grid" id="allProducts"></div>
+  </section>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    database.ref('products').once('value').then(s => {
+      const prods = s.val() ? Object.values(s.val()) : [];
+      document.getElementById('allProducts').innerHTML = prods.map(p => `
+        <div class="product-card" onclick="location.href='product-detail.html?id=${p.id}'">
+          <div class="product-img">${p.img||'📦'}</div>
+          <div class="product-info">
+            <div class="product-title">${p.title}</div>
+            <div class="price-range">${p.price||''}</div>
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

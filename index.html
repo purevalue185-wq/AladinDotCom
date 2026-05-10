@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AladinDotCom | Wholesale Import Marketplace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">Aladin<span>DotCom</span></a>
+      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="#categories">Categories</a>
+        <a href="#products">Products</a>
+        <a href="#contact">Contact</a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." id="navSearch">
+          <button id="navSearchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <span id="userDisplay" style="display:none;font-weight:600;color:var(--secondary);"></span>
+        <button class="btn login-btn" id="loginBtn" onclick="openModal('loginModal')">Login</button>
+        <button class="btn btn-primary" id="signupBtn" onclick="openModal('signupModal')">Sign Up</button>
+        <button class="btn btn-outline" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h1>Global Bulk Import,<br>Simplified & Direct</h1>
+        <p>Source premium wholesale products. Sign up to see prices & place orders!</p>
+        <div class="hero-search">
+          <input type="text" placeholder="Search products..." id="heroSearchInput">
+          <button class="btn btn-primary" id="heroSearchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="hero-buttons">
+          <button class="btn btn-accent" onclick="openModal('signupModal')"><i class="fas fa-user-plus"></i> Register to Buy</button>
+          <a href="#products" class="btn btn-outline">View Products</a>
+        </div>
+      </div>
+      <div class="hero-illustration"></div>
+    </div>
+  </section>
+
+  <section class="container section-padding" id="categories">
+    <div class="section-title"><h2>Popular Categories</h2></div>
+    <div class="categories-grid" id="categoriesGrid"></div>
+  </section>
+
+  <section class="container section-padding" id="products">
+    <div class="section-title"><h2>Featured Products</h2></div>
+    <div class="products-grid" id="productsContainer"></div>
+  </section>
+
+  <section class="container section-padding" id="contact">
+    <div class="section-title"><h2>Contact Us</h2></div>
+    <div class="contact-grid">
+      <div class="contact-form">
+        <input type="text" placeholder="Name" id="contactName">
+        <input type="email" placeholder="Email" id="contactEmail">
+        <textarea rows="4" placeholder="Message" id="contactMessage"></textarea>
+        <button class="btn btn-primary btn-full" id="sendInquiryBtn">Send Inquiry</button>
+      </div>
+      <div class="contact-info">
+        <div class="contact-item"><i class="fab fa-whatsapp contact-icon"></i><div><strong>WhatsApp</strong><p>+1 555 123 4567</p></div></div>
+        <div class="contact-item"><i class="far fa-envelope contact-icon"></i><div><strong>Email</strong><p>support@aladindotcom.com</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-container">
+      <div><strong>AladinDotCom</strong><p>Premium wholesale marketplace</p></div>
+      <div class="footer-links"><a href="#">Products</a><a href="#contact">Contact</a></div>
+    </div>
+    <div class="container copyright"><p>&copy; 2025 AladinDotCom. All rights reserved.</p></div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Login to Your Account</h2>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email address">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="btn btn-primary btn-full" onclick="loginWithEmail()">Login</button>
+        <div class="divider"><span>or</span></div>
+        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Login with Google</button>
+        <button class="btn btn-outline btn-full" onclick="loginWithPhone()"><i class="fas fa-phone"></i> Login with Phone</button>
+      </div>
+      <p style="text-align:center;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal" id="signupModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
+      <h2>Create Account</h2>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="Email address">
+        <input type="password" id="signupPassword" placeholder="Password (6+ characters)">
+        <button class="btn btn-primary btn-full" onclick="signupWithEmail()">Create Account</button>
+        <div class="divider"><span>or</span></div>
+        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Sign Up with Google</button>
+      </div>
+      <p style="text-align:center;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')">Login</a></p>
+    </div>
+  </div>
+
+  <!-- Phone Modal -->
+  <div class="modal" id="phoneModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('phoneModal')">&times;</span>
+      <h2>Phone Login</h2>
+      <div id="recaptcha-container"></div>
+      <input type="tel" id="phoneNumber" placeholder="+1234567890" style="width:100%;padding:0.8rem;margin:1rem 0;border:1px solid #ddd;border-radius:0.5rem;">
+      <button class="btn btn-primary btn-full" id="sendCodeBtn" onclick="sendPhoneCode()">Send Code</button>
+      <div id="codeSection" style="display:none;margin-top:1rem;">
+        <input type="text" id="verificationCode" placeholder="Enter 6-digit code" style="width:100%;padding:0.8rem;border:1px solid #ddd;border-radius:0.5rem;">
+        <button class="btn btn-primary btn-full" style="margin-top:0.5rem;" onclick="verifyPhoneCode()">Verify</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
