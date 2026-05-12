@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | AladinDotCom</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Aladin<span>Admin</span></h2>
+        <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-times"></i></button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="#" class="nav-item" data-page="products"><i class="fas fa-box"></i> Products</a>
+        <a href="#" class="nav-item" data-page="add-product"><i class="fas fa-plus-circle"></i> Add Product</a>
+        <a href="#" class="nav-item" data-page="orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+        <a href="#" class="nav-item" data-page="inquiries"><i class="fas fa-envelope"></i> Inquiries</a>
+        <a href="index.html" class="nav-item"><i class="fas fa-external-link-alt"></i> View Site</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <span id="adminEmail" style="font-weight:600;"></span>
+        <button class="btn btn-outline" onclick="auth.signOut().then(()=>location.href='index.html')">Logout</button>
+      </header>
+
+      <div class="page-content active" id="dashboard-page">
+        <h1>Dashboard</h1>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-box"></i></div><div class="stat-info"><h3 id="totalProducts">0</h3><p>Products</p></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalOrders">0</h3><p>Orders</p></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-envelope"></i></div><div class="stat-info"><h3 id="totalInquiries">0</h3><p>Inquiries</p></div></div>
+        </div>
+      </div>
+
+      <div class="page-content" id="products-page">
+        <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+          <h1>Products</h1>
+          <button class="btn btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add</button>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table"><thead><tr><th>Img</th><th>Title</th><th>Category</th><th>MOQ</th><th>Price</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page-content" id="add-product-page">
+        <h1 id="formTitle">Add Product</h1>
+        <form id="productForm" class="product-form">
+          <input type="hidden" id="productId">
+          <div class="form-grid">
+            <div class="form-group"><label>Title *</label><input type="text" id="prodTitle" required></div>
+            <div class="form-group"><label>Category *</label><select id="prodCategory" required><option value="">Select</option><option value="electronics">Electronics</option><option value="kitchen">Kitchen</option><option value="beauty">Beauty</option><option value="household">Household</option><option value="packaging">Packaging</option><option value="industrial">Industrial</option></select></div>
+            <div class="form-group"><label>Emoji *</label><input type="text" id="prodImg" required placeholder="🎧"></div>
+            <div class="form-group"><label>MOQ *</label><input type="text" id="prodMoq" required></div>
+            <div class="form-group"><label>Price Range *</label><input type="text" id="prodPrice" required></div>
+            <div class="form-group"><label>Supplier</label><input type="text" id="prodSupplier"></div>
+            <div class="form-group"><label>Shipping</label><input type="text" id="prodShipping"></div>
+            <div class="form-group"><label>Rating</label><input type="number" id="prodRating" value="4.5" step="0.1" min="0" max="5"></div>
+            <div class="form-group"><label>Reviews</label><input type="number" id="prodReviews" value="0"></div>
+          </div>
+          <div class="form-group full-width"><label>Description *</label><textarea id="prodDesc" rows="3" required></textarea></div>
+          <div class="form-group full-width"><label>Gallery Images (comma emojis)</label><input type="text" id="prodImages" placeholder="🎧, 🔊"></div>
+          <div class="form-group full-width"><label>Specifications (JSON)</label><textarea id="prodSpecs" rows="2">{}</textarea></div>
+          <div class="form-group full-width"><label>Bulk Prices (JSON)</label><textarea id="prodBulkPrices" rows="2">[]</textarea></div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-outline" onclick="showProducts()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="page-content" id="orders-page">
+        <h1>Orders</h1>
+        <div class="table-responsive">
+          <table class="admin-table"><thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Email</th><th>Status</th></tr></thead><tbody id="ordersTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page-content" id="inquiries-page">
+        <h1>Inquiries</h1>
+        <div class="table-responsive">
+          <table class="admin-table"><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th></tr></thead><tbody id="inquiriesTableBody"></tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
