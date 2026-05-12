@@ -1,27 +1,73 @@
-function renderFeaturedProducts() {
+function renderProducts() {
 
   const container =
-    document.getElementById('productsContainer');
+    document.getElementById('allProductsContainer');
 
   if (!container) return;
 
-  // SHOW 8 PRODUCTS
-  const featuredProducts = products.slice(0, 8);
+  let filtered = allProducts;
 
-  // EMPTY STATE
-  if (featuredProducts.length === 0) {
+  // CATEGORY FILTER
+  if (
+    categoryFilter &&
+    categoryFilter !== 'all'
+  ) {
+
+    filtered = filtered.filter(
+      p => p.category === categoryFilter
+    );
+
+  }
+
+  // SEARCH FILTER
+  if (searchQuery) {
+
+    const q = searchQuery.toLowerCase();
+
+    filtered = filtered.filter(p =>
+
+      (p.title || '')
+        .toLowerCase()
+        .includes(q)
+
+      ||
+
+      (p.category || '')
+        .toLowerCase()
+        .includes(q)
+
+    );
+
+  }
+
+  // COUNT
+  document.getElementById('resultCount')
+    .innerHTML =
+    `Showing ${filtered.length} Products`;
+
+  // EMPTY
+  if (filtered.length === 0) {
 
     container.innerHTML = `
 
       <div class="empty-products">
 
-        <i class="fas fa-box-open"></i>
+        <i class="fas fa-search"></i>
 
-        <h3>No Products Available</h3>
+        <h3>
+          No Products Found
+        </h3>
 
         <p>
-          Wholesale products will appear here soon.
+          Try different keywords or categories.
         </p>
+
+        <a
+          href="products.html"
+          class="btn btn-primary"
+        >
+          Show All Products
+        </a>
 
       </div>
 
@@ -31,37 +77,33 @@ function renderFeaturedProducts() {
 
   }
 
-  // RENDER PRODUCTS
-  container.innerHTML = featuredProducts.map(p => `
+  // PRODUCTS
+  container.innerHTML = filtered.map(p => `
 
     <div
       class="product-card"
-      onclick="goToProductDetail('${p.id}')"
+      onclick="goToDetail('${p.id}')"
     >
 
       <!-- IMAGE -->
       <div class="product-img-wrap">
 
-        <!-- VERIFIED -->
         <span class="verified-tag">
 
           Verified
 
         </span>
 
-        <!-- PRODUCT IMAGE -->
         <img
 
           src="${
             p.image ||
-            'https://via.placeholder.com/600x600?text=Product'
+            'https://via.placeholder.com/500x500'
           }"
-
-          alt="${p.title}"
 
           class="product-real-img"
 
-          loading="lazy"
+          alt="${p.title}"
 
         >
 
@@ -70,7 +112,7 @@ function renderFeaturedProducts() {
       <!-- INFO -->
       <div class="product-info">
 
-        <!-- TOP -->
+        <!-- BADGES -->
         <div class="product-top-row">
 
           <span class="moq-badge">
@@ -81,7 +123,7 @@ function renderFeaturedProducts() {
 
           <span class="shipping-badge">
 
-            Fast Ship
+            Fast Shipping
 
           </span>
 
@@ -103,7 +145,7 @@ function renderFeaturedProducts() {
 
         </div>
 
-        <!-- RATINGS -->
+        <!-- RATING -->
         <div class="rating-row">
 
           <div class="rating-stars">
@@ -134,6 +176,13 @@ function renderFeaturedProducts() {
 
         </div>
 
+        <!-- SHIPPING -->
+        <div class="shipping-text">
+
+          Worldwide Shipping Available
+
+        </div>
+
         <!-- BUTTONS -->
         <div class="product-bottom">
 
@@ -143,14 +192,14 @@ function renderFeaturedProducts() {
 
             onclick="
               event.stopPropagation();
-              goToProductDetail('${p.id}')
+              goToDetail('${p.id}')
             "
 
           >
 
             <i class="fas fa-eye"></i>
 
-            View
+            View Details
 
           </button>
 
@@ -160,7 +209,7 @@ function renderFeaturedProducts() {
 
             onclick="
               event.stopPropagation();
-              orderWhatsApp(
+              orderNow(
                 '${p.id}',
                 '${escapeStr(p.title || 'Product')}'
               )
