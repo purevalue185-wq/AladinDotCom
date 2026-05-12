@@ -1,139 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AladinDotCom | Wholesale Import Marketplace</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <nav class="navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="logo">Aladin<span>DotCom</span></a>
-      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-      <div class="nav-links" id="navLinks">
-        <a href="index.html">Home</a>
-        <a href="#categories">Categories</a>
-        <a href="#products">Products</a>
-        <a href="products.html">All Products</a>
-        <a href="#contact">Contact</a>
-        <div class="search-bar">
-          <input type="text" placeholder="Search..." id="navSearch">
-          <button id="navSearchBtn"><i class="fas fa-search"></i></button>
+<section class="hero">
+
+  <div class="container hero-grid">
+
+    <!-- LEFT SIDE -->
+    <div class="hero-content">
+
+      <span class="hero-mini-title">
+        VERIFIED WHOLESALE MARKETPLACE
+      </span>
+
+      <h1>
+        Global Bulk Import,<br>
+        Simplified & Direct
+      </h1>
+
+      <p>
+        Source premium wholesale products with MOQ pricing,
+        fast shipping, and direct supplier deals.
+      </p>
+
+      <!-- SEARCH -->
+      <div class="hero-search">
+
+        <input
+          type="text"
+          placeholder="Search products, categories and suppliers..."
+          id="heroSearchInput"
+        >
+
+        <button class="btn btn-primary" id="heroSearchBtn">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+
+      </div>
+
+      <!-- TAGS -->
+      <div class="hero-tags">
+
+        <span>
+          Trade Assurance
+        </span>
+
+        <span>
+          Verified Suppliers
+        </span>
+
+        <span>
+          Fast Shipping
+        </span>
+
+        <span>
+          Bulk Prices
+        </span>
+
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="hero-buttons">
+
+        <a href="products.html" class="btn btn-accent">
+          <i class="fas fa-shopping-cart"></i>
+          Shop Now
+        </a>
+
+        <a href="#categories" class="btn btn-outline">
+          Browse Categories
+        </a>
+
+      </div>
+
+      <!-- STATS -->
+      <div class="hero-stats">
+
+        <div class="stat-box">
+          <h3>10K+</h3>
+          <p>Wholesale Products</p>
         </div>
-        <span id="userDisplay" style="display:none;font-weight:600;color:var(--secondary);"></span>
-        <button class="btn login-btn" id="loginBtn" onclick="openModal('loginModal')">Login</button>
-        <button class="btn btn-primary" id="signupBtn" onclick="openModal('signupModal')">Sign Up</button>
-        <button class="btn btn-outline" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
-      </div>
-    </div>
-  </nav>
 
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-content">
-        <h1>Global Bulk Import,<br>Simplified & Direct</h1>
-        <p>Source premium wholesale products from verified suppliers worldwide.</p>
-        <div class="hero-search">
-          <input type="text" placeholder="Search products..." id="heroSearchInput">
-          <button class="btn btn-primary" id="heroSearchBtn"><i class="fas fa-search"></i> Search</button>
+        <div class="stat-box">
+          <h3>500+</h3>
+          <p>Trusted Categories</p>
         </div>
-        <div class="hero-buttons">
-          <a href="products.html" class="btn btn-accent"><i class="fas fa-shopping-cart"></i> Shop Now</a>
-          <a href="#categories" class="btn btn-outline">Browse Categories</a>
+
+        <div class="stat-box">
+          <h3>24/7</h3>
+          <p>Global Support</p>
         </div>
+
       </div>
-      <div class="hero-illustration"></div>
+
     </div>
-  </section>
 
-  <section class="container section-padding" id="categories">
-    <div class="section-title"><h2>Popular Categories</h2><p>Click to browse products</p></div>
-    <div class="categories-grid" id="categoriesGrid"></div>
-  </section>
 
-  <section class="container section-padding" id="products">
-    <div class="section-title"><h2>Featured Products</h2><p>Latest wholesale deals</p></div>
-    <div class="products-grid" id="productsContainer"></div>
-    <div class="text-center" style="margin-top:2.5rem;">
-      <a href="products.html" class="btn btn-primary btn-large">
-        <i class="fas fa-th-large"></i> View All Products
-      </a>
-    </div>
-  </section>
+    <!-- RIGHT SIDE -->
+    <div class="hero-right-wrapper">
 
-  <section class="container section-padding" id="why">
-    <div class="section-title"><h2>Why AladinDotCom</h2></div>
-    <div class="why-grid">
-      <div class="why-card"><i class="fas fa-tags fa-2x icon-blue"></i><h3>Direct Pricing</h3><p>Save up to 40%</p></div>
-      <div class="why-card"><i class="fas fa-layer-group fa-2x icon-blue"></i><h3>Bulk Discounts</h3><p>More you buy, less you pay</p></div>
-      <div class="why-card"><i class="fas fa-shipping-fast fa-2x icon-blue"></i><h3>Fast Shipping</h3><p>7-18 days worldwide</p></div>
-      <div class="why-card"><i class="fas fa-shield-alt fa-2x icon-blue"></i><h3>Trusted</h3><p>Verified suppliers</p></div>
-    </div>
-  </section>
+      <!-- MAIN BANNER -->
+      <div class="hero-banner-card">
 
-  <section class="container section-padding" id="contact">
-    <div class="section-title"><h2>Contact Us</h2></div>
-    <div class="contact-grid">
-      <div class="contact-form">
-        <input type="text" placeholder="Name" id="contactName">
-        <input type="email" placeholder="Email" id="contactEmail">
-        <textarea rows="4" placeholder="Message" id="contactMessage"></textarea>
-        <button class="btn btn-primary btn-full" id="sendInquiryBtn">Send Inquiry</button>
+        <div class="hero-banner-overlay">
+
+          <h2>
+            Sri Lanka's Modern<br>
+            Wholesale Marketplace
+          </h2>
+
+          <p>
+            Import smarter with bulk pricing.
+          </p>
+
+        </div>
+
       </div>
-      <div class="contact-info">
-        <div class="contact-item"><i class="fab fa-whatsapp contact-icon"></i><div><strong>WhatsApp</strong><p>+1 555 123 4567</p></div></div>
-        <div class="contact-item"><i class="far fa-envelope contact-icon"></i><div><strong>Email</strong><p>support@aladindotcom.com</p></div></div>
-      </div>
-    </div>
-  </section>
 
-  <footer>
-    <div class="container footer-container">
-      <div><strong>AladinDotCom</strong><p>Premium wholesale marketplace</p></div>
-      <div class="footer-links"><a href="products.html">All Products</a><a href="#contact">Contact</a></div>
-    </div>
-    <div class="container copyright"><p>&copy; 2025 AladinDotCom</p></div>
-  </footer>
+      <!-- SMALL CARDS -->
+      <div class="hero-side-cards">
 
-  <!-- Login Modal -->
-  <div class="modal" id="loginModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-      <h2>Login</h2>
-      <div class="auth-form">
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button class="btn btn-primary btn-full" onclick="loginWithEmail()">Login</button>
-        <div class="divider"><span>or</span></div>
-        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
+        <div class="hero-small-card">
+
+          <i class="fas fa-box"></i>
+
+          <div>
+            <h4>Top Deals</h4>
+            <p>Up to 40% OFF</p>
+          </div>
+
+        </div>
+
+        <div class="hero-small-card">
+
+          <i class="fas fa-shipping-fast"></i>
+
+          <div>
+            <h4>Fast Delivery</h4>
+            <p>Worldwide Shipping</p>
+          </div>
+
+        </div>
+
       </div>
-      <p style="text-align:center;margin-top:1rem;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')">Sign Up</a></p>
+
     </div>
+
   </div>
 
-  <!-- Signup Modal -->
-  <div class="modal" id="signupModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
-      <h2>Sign Up</h2>
-      <div class="auth-form">
-        <input type="text" id="signupName" placeholder="Full Name">
-        <input type="email" id="signupEmail" placeholder="Email">
-        <input type="password" id="signupPassword" placeholder="Password">
-        <button class="btn btn-primary btn-full" onclick="signupWithEmail()">Create Account</button>
-        <div class="divider"><span>or</span></div>
-        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
-      </div>
-      <p style="text-align:center;margin-top:1rem;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')">Login</a></p>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+</section>
