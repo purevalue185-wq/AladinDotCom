@@ -7,7 +7,7 @@ function renderProducts() {
 
   let filtered = allProducts;
 
-  // CATEGORY FILTER
+  // CATEGORY
   if (
     categoryFilter &&
     categoryFilter !== 'all'
@@ -19,31 +19,38 @@ function renderProducts() {
 
   }
 
-  // SEARCH FILTER
+  // SEARCH
   if (searchQuery) {
 
-    const q = searchQuery.toLowerCase();
+    const q =
+      searchQuery.toLowerCase();
 
     filtered = filtered.filter(p =>
 
       (p.title || '')
-        .toLowerCase()
-        .includes(q)
+      .toLowerCase()
+      .includes(q)
 
       ||
 
       (p.category || '')
-        .toLowerCase()
-        .includes(q)
+      .toLowerCase()
+      .includes(q)
 
     );
 
   }
 
   // COUNT
-  document.getElementById('resultCount')
-    .innerHTML =
-    `Showing ${filtered.length} Products`;
+  const countEl =
+    document.getElementById('resultCount');
+
+  if (countEl) {
+
+    countEl.innerHTML =
+      `Showing ${filtered.length} Products`;
+
+  }
 
   // EMPTY
   if (filtered.length === 0) {
@@ -52,22 +59,11 @@ function renderProducts() {
 
       <div class="empty-products">
 
-        <i class="fas fa-search"></i>
-
-        <h3>
-          No Products Found
-        </h3>
+        <h2>No Products Found</h2>
 
         <p>
-          Try different keywords or categories.
+          Try another category or keyword.
         </p>
-
-        <a
-          href="products.html"
-          class="btn btn-primary"
-        >
-          Show All Products
-        </a>
 
       </div>
 
@@ -95,16 +91,14 @@ function renderProducts() {
         </span>
 
         <img
-
           src="${
             p.image ||
-            'https://via.placeholder.com/500x500'
+            'https://via.placeholder.com/500'
           }"
-
-          class="product-real-img"
 
           alt="${p.title}"
 
+          class="product-real-img"
         >
 
       </div>
@@ -112,7 +106,7 @@ function renderProducts() {
       <!-- INFO -->
       <div class="product-info">
 
-        <!-- BADGES -->
+        <!-- TOP -->
         <div class="product-top-row">
 
           <span class="moq-badge">
@@ -141,7 +135,7 @@ function renderProducts() {
 
           <i class="fas fa-shield-alt"></i>
 
-          ${p.supplier || 'Aladin Verified Supplier'}
+          ${p.supplier || 'Verified Supplier'}
 
         </div>
 
@@ -176,48 +170,19 @@ function renderProducts() {
 
         </div>
 
-        <!-- SHIPPING -->
-        <div class="shipping-text">
-
-          Worldwide Shipping Available
-
-        </div>
-
-        <!-- BUTTONS -->
+        <!-- BUTTON -->
         <div class="product-bottom">
 
           <button
-
             class="view-btn"
 
             onclick="
               event.stopPropagation();
               goToDetail('${p.id}')
             "
-
           >
-
-            <i class="fas fa-eye"></i>
 
             View Details
-
-          </button>
-
-          <button
-
-            class="whatsapp-btn"
-
-            onclick="
-              event.stopPropagation();
-              orderNow(
-                '${p.id}',
-                '${escapeStr(p.title || 'Product')}'
-              )
-            "
-
-          >
-
-            <i class="fab fa-whatsapp"></i>
 
           </button>
 
