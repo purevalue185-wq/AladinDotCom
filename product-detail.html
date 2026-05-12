@@ -1,47 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details | AladinDotCom</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Product Details | AladinDotCom
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 <body>
+
+  <!-- NAVBAR -->
   <nav class="navbar">
+
     <div class="container nav-container">
-      <a href="index.html" class="logo">Aladin<span>DotCom</span></a>
-      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-      <div class="nav-links" id="navLinks">
-        <a href="index.html">Home</a>
-        <a href="products.html">Products</a>
-        <a href="index.html#contact">Contact</a>
+
+      <!-- LOGO -->
+      <a href="index.html" class="logo">
+
+        Aladin<span>DotCom</span>
+
+      </a>
+
+      <!-- MOBILE -->
+      <button
+        class="hamburger"
+        id="hamburgerBtn"
+      >
+
+        <i class="fas fa-bars"></i>
+
+      </button>
+
+      <!-- NAV -->
+      <div
+        class="nav-links"
+        id="navLinks"
+      >
+
+        <a href="index.html">
+
+          Home
+
+        </a>
+
+        <a href="products.html">
+
+          Products
+
+        </a>
+
+        <a href="index.html#contact">
+
+          Contact
+
+        </a>
+
+        <!-- SEARCH -->
+        <div class="search-bar">
+
+          <input
+            type="text"
+            placeholder="Search wholesale products..."
+            id="navSearch"
+          >
+
+          <button id="navSearchBtn">
+
+            <i class="fas fa-search"></i>
+
+          </button>
+
+        </div>
+
       </div>
+
     </div>
+
   </nav>
 
-  <section class="container section-padding">
-    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="products.html">Products</a> / <span id="breadcrumbProduct">Details</span></div>
-    <div id="productDetailContainer"></div>
-  </section>
 
-  <section class="container section-padding">
-    <div class="section-title"><h2>Related Products</h2></div>
-    <div class="products-grid" id="relatedProducts"></div>
-  </section>
+  <!-- BREADCRUMB -->
+  <section class="container">
 
-  <footer>
-    <div class="container footer-container">
-      <div><strong>AladinDotCom</strong></div>
-      <div class="footer-links"><a href="index.html">Home</a><a href="products.html">Products</a></div>
+    <div class="breadcrumb">
+
+      <a href="index.html">
+
+        Home
+
+      </a>
+
+      <i class="fas fa-angle-right"></i>
+
+      <a href="products.html">
+
+        Products
+
+      </a>
+
+      <i class="fas fa-angle-right"></i>
+
+      <span id="breadcrumbProduct">
+
+        Product Details
+
+      </span>
+
     </div>
-    <div class="container copyright"><p>&copy; 2025 AladinDotCom</p></div>
+
+  </section>
+
+
+  <!-- PRODUCT DETAIL -->
+  <section class="container section-padding">
+
+    <div id="productDetailContainer">
+
+      <!-- LOADING -->
+      <div class="product-loading">
+
+        <i class="fas fa-spinner fa-spin"></i>
+
+        <p>
+          Loading Product...
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- TRUST SECTION -->
+  <section class="container">
+
+    <div class="trade-services-grid">
+
+      <!-- CARD -->
+      <div class="trade-service-card">
+
+        <i class="fas fa-shield-alt"></i>
+
+        <div>
+
+          <h4>
+
+            Trade Assurance
+
+          </h4>
+
+          <p>
+
+            Secure wholesale transactions.
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- CARD -->
+      <div class="trade-service-card">
+
+        <i class="fas fa-truck"></i>
+
+        <div>
+
+          <h4>
+
+            Fast Shipping
+
+          </h4>
+
+          <p>
+
+            Worldwide delivery available.
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- CARD -->
+      <div class="trade-service-card">
+
+        <i class="fas fa-tags"></i>
+
+        <div>
+
+          <h4>
+
+            Bulk Pricing
+
+          </h4>
+
+          <p>
+
+            Better prices for larger orders.
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- RELATED -->
+  <section class="container section-padding">
+
+    <div class="section-title">
+
+      <h2>
+
+        Related Products
+
+      </h2>
+
+      <p>
+
+        More wholesale import products
+
+      </p>
+
+    </div>
+
+    <div
+      class="products-grid"
+      id="relatedProducts"
+    >
+
+      <!-- RELATED PRODUCTS -->
+
+    </div>
+
+  </section>
+
+
+  <!-- INQUIRY CTA -->
+  <section class="container section-padding">
+
+    <div class="inquiry-banner">
+
+      <div>
+
+        <h2>
+
+          Need Better Bulk Pricing?
+
+        </h2>
+
+        <p>
+
+          Contact us directly for container pricing,
+          wholesale discounts and shipping details.
+
+        </p>
+
+      </div>
+
+      <a
+        href="https://wa.me/947XXXXXXXX"
+        target="_blank"
+        class="btn btn-accent"
+      >
+
+        <i class="fab fa-whatsapp"></i>
+
+        Contact Supplier
+
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="container footer-container">
+
+      <div>
+
+        <strong>
+
+          AladinDotCom
+
+        </strong>
+
+        <p>
+
+          Sri Lanka Wholesale Marketplace
+
+        </p>
+
+      </div>
+
+      <div class="footer-links">
+
+        <a href="index.html">
+
+          Home
+
+        </a>
+
+        <a href="products.html">
+
+          Products
+
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="container copyright">
+
+      <p>
+
+        © 2026 AladinDotCom
+
+      </p>
+
+    </div>
+
   </footer>
 
+
+  <!-- FLOATING WHATSAPP -->
+  <a
+    href="https://wa.me/947XXXXXXXX"
+    class="floating-whatsapp"
+    target="_blank"
+  >
+
+    <i class="fab fa-whatsapp"></i>
+
+  </a>
+
+
+  <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
   <script src="firebase-config.js"></script>
+
   <script src="product-detail.js"></script>
+
 </body>
+
 </html>
