@@ -1,231 +1,68 @@
-function renderProducts() {
+<!DOCTYPE html>
+<html lang="en">
 
-  const container =
-    document.getElementById('allProductsContainer');
+<head>
 
-  if (!container) return;
+  <meta charset="UTF-8">
 
-  let filtered = allProducts;
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  // CATEGORY FILTER
-  if (
-    categoryFilter &&
-    categoryFilter !== 'all'
-  ) {
+  <title>
+    Products | AladinDotCom
+  </title>
 
-    filtered = filtered.filter(
-      p => p.category === categoryFilter
-    );
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  >
 
-  }
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 
-  // SEARCH FILTER
-  if (searchQuery) {
+</head>
 
-    const q = searchQuery.toLowerCase();
+<body>
 
-    filtered = filtered.filter(p =>
+  <!-- NAVBAR -->
+  <nav class="navbar">
 
-      (p.title || '')
-      .toLowerCase()
-      .includes(q)
+    <div class="container nav-container">
 
-      ||
+      <a href="index.html" class="logo">
+        Aladin<span>DotCom</span>
+      </a>
 
-      (p.category || '')
-      .toLowerCase()
-      .includes(q)
+      <button class="hamburger" id="hamburgerBtn">
 
-    );
+        <i class="fas fa-bars"></i>
 
-  }
+      </button>
 
-  // COUNT
-  document.getElementById(
-    'resultCount'
-  ).innerHTML =
+      <div class="nav-links" id="navLinks">
 
-  `Showing <span>${filtered.length}</span> Products`;
+        <a href="index.html">Home</a>
 
-  // EMPTY
-  if (filtered.length === 0) {
+        <a href="products.html">Products</a>
 
-    container.innerHTML = `
+        <a href="index.html#contact">Contact</a>
 
-      <div class="empty-products">
+        <!-- SEARCH -->
+        <div class="search-bar">
 
-        <i class="fas fa-search"></i>
-
-        <h3>
-          No Products Found
-        </h3>
-
-        <p>
-          Try different keywords or categories.
-        </p>
-
-        <a
-          href="products.html"
-          class="btn btn-primary"
-        >
-
-          Show All Products
-
-        </a>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-  // PRODUCTS
-  container.innerHTML = filtered.map(p => `
-
-    <div
-      class="product-card"
-      onclick="goToDetail('${p.id}')"
-    >
-
-      <!-- IMAGE -->
-      <div class="product-img-wrap">
-
-        <!-- VERIFIED -->
-        <span class="verified-tag">
-
-          Verified
-
-        </span>
-
-        <!-- PRODUCT IMAGE -->
-        <img
-
-          src="${
-            p.image ||
-            'https://via.placeholder.com/600x600?text=Product'
-          }"
-
-          alt="${p.title}"
-
-          class="product-real-img"
-
-          loading="lazy"
-
-        >
-
-      </div>
-
-      <!-- INFO -->
-      <div class="product-info">
-
-        <!-- BADGES -->
-        <div class="product-top-row">
-
-          <span class="moq-badge">
-
-            ${p.moq || 'MOQ Available'}
-
-          </span>
-
-          <span class="shipping-badge">
-
-            Fast Shipping
-
-          </span>
-
-        </div>
-
-        <!-- TITLE -->
-        <div class="product-title">
-
-          ${p.title || 'Wholesale Product'}
-
-        </div>
-
-        <!-- SUPPLIER -->
-        <div class="supplier-name">
-
-          <i class="fas fa-shield-alt"></i>
-
-          ${p.supplier || 'Aladin Verified Supplier'}
-
-        </div>
-
-        <!-- RATINGS -->
-        <div class="rating-row">
-
-          <div class="rating-stars">
-
-            ★★★★★
-
-          </div>
-
-          <span>
-
-            (${p.reviews || 0})
-
-          </span>
-
-        </div>
-
-        <!-- PRICE -->
-        <div class="price-range">
-
-          ${p.price || 'Rs Contact'}
-
-        </div>
-
-        <!-- BULK -->
-        <div class="bulk-text">
-
-          Bulk Pricing Available
-
-        </div>
-
-        <!-- SHIPPING -->
-        <div class="shipping-text">
-
-          Worldwide Shipping Available
-
-        </div>
-
-        <!-- BUTTONS -->
-        <div class="product-bottom">
-
-          <button
-
-            class="view-btn"
-
-            onclick="
-              event.stopPropagation();
-              goToDetail('${p.id}')
-            "
-
+          <input
+            type="text"
+            placeholder="Search wholesale products..."
+            id="productSearchInput"
           >
 
-            <i class="fas fa-eye"></i>
+          <button id="productSearchBtn">
 
-            View Details
-
-          </button>
-
-          <button
-
-            class="whatsapp-btn"
-
-            onclick="
-              event.stopPropagation();
-              orderNow(
-                '${p.id}',
-                '${escapeStr(p.title || 'Product')}'
-              )
-            "
-
-          >
-
-            <i class="fab fa-whatsapp"></i>
+            <i class="fas fa-search"></i>
 
           </button>
 
@@ -235,6 +72,168 @@ function renderProducts() {
 
     </div>
 
-  `).join('');
+  </nav>
 
-}
+
+  <!-- HEADER -->
+  <section class="hero">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2 id="pageTitle">
+
+          All Products
+
+        </h2>
+
+        <p id="pageSubtitle">
+
+          Browse wholesale import products
+
+        </p>
+
+      </div>
+
+      <!-- FILTERS -->
+      <div class="hero-tags">
+
+        <button
+          class="btn btn-outline filter-btn active"
+          data-category="all"
+        >
+
+          All
+
+        </button>
+
+        <button
+          class="btn btn-outline filter-btn"
+          data-category="electronics"
+        >
+
+          Electronics
+
+        </button>
+
+        <button
+          class="btn btn-outline filter-btn"
+          data-category="kitchen"
+        >
+
+          Kitchen
+
+        </button>
+
+        <button
+          class="btn btn-outline filter-btn"
+          data-category="beauty"
+        >
+
+          Beauty
+
+        </button>
+
+        <button
+          class="btn btn-outline filter-btn"
+          data-category="household"
+        >
+
+          Household
+
+        </button>
+
+      </div>
+
+      <!-- RESULT -->
+      <div
+        id="resultCount"
+        style="
+          margin-top:1rem;
+          font-weight:700;
+        "
+      >
+
+        Showing 0 Products
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+  <section class="container section-padding">
+
+    <div
+      class="products-grid"
+      id="allProductsContainer"
+    ></div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="container footer-container">
+
+      <div>
+
+        <strong>
+
+          AladinDotCom
+
+        </strong>
+
+      </div>
+
+      <div class="footer-links">
+
+        <a href="index.html">
+
+          Home
+
+        </a>
+
+        <a href="products.html">
+
+          Products
+
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="container copyright">
+
+      <p>
+
+        © 2026 AladinDotCom
+
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+
+  <script src="data.js"></script>
+
+  <script src="products.js"></script>
+
+</body>
+
+</html>
