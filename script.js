@@ -1,17 +1,13 @@
 // ==========================================
 // ALADINDOTCOM - HOMEPAGE SCRIPT
+// FINAL VERSION
 // ==========================================
 
 let currentUser = null;
 let products = [];
 
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-}
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 auth.onAuthStateChanged(user => {
   currentUser = user;
@@ -52,7 +48,6 @@ function loadProducts() {
 function renderCategories() {
   const grid = document.getElementById('categoriesGrid');
   if (!grid) return;
-
   const categories = [
     { name: 'Electronics', icon: 'fa-mobile-alt', slug: 'electronics' },
     { name: 'Kitchen Items', icon: 'fa-utensils', slug: 'kitchen' },
@@ -61,7 +56,6 @@ function renderCategories() {
     { name: 'Packaging', icon: 'fa-box', slug: 'packaging' },
     { name: 'Industrial', icon: 'fa-industry', slug: 'industrial' }
   ];
-
   grid.innerHTML = categories.map(c => `
     <div class="category-card" onclick="goToCategory('${c.slug}')">
       <i class="fas ${c.icon} category-icon"></i>
@@ -73,162 +67,79 @@ function renderCategories() {
 function renderFeaturedProducts() {
   const container = document.getElementById('productsContainer');
   if (!container) return;
-
   const featuredProducts = products.slice(0, 6);
 
   if (featuredProducts.length === 0) {
-    container.innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:3rem;">
-        <i class="fas fa-box-open" style="font-size:3rem;color:var(--gray-500);"></i>
-        <h3>No Products Yet</h3>
-        <p>Check back soon!</p>
-      </div>`;
+    container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;"><i class="fas fa-box-open" style="font-size:3rem;color:var(--gray-500);"></i><h3>No Products Yet</h3><p>Check back soon!</p></div>`;
     return;
   }
 
-  container.innerHTML = featuredProducts.map(p => `
+  container.innerHTML = featuredProducts.map(p => {
+    const imgHTML = (p.img && p.img.startsWith('http')) 
+      ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;" alt="${p.title}">`
+      : p.img || '📦';
+    
+    return `
     <div class="product-card" onclick="goToProductDetail('${p.id}')" style="cursor:pointer;">
-      <div class="product-img">${p.img || '📦'}</div>
+      <div class="product-img">${imgHTML}</div>
       <div class="product-info">
         <span class="moq-badge">${p.moq || 'MOQ Available'}</span>
         <div class="product-title">${p.title}</div>
         <div class="price-range">${p.price || 'Contact for Price'}</div>
-        <div class="rating">
-          <i class="fas fa-star"></i> ${p.rating || '4.5'} | ${p.reviews || 0} orders
-        </div>
+        <div class="rating"><i class="fas fa-star"></i> ${p.rating || '4.5'} | ${p.reviews || 0} orders</div>
         <button class="btn btn-primary btn-full" onclick="event.stopPropagation();goToProductDetail('${p.id}')" style="margin-top:0.5rem;">View Details</button>
         <button class="btn btn-accent btn-full" onclick="event.stopPropagation();orderWhatsApp('${p.id}', '${escapeStr(p.title)}')" style="margin-top:0.3rem;"><i class="fab fa-whatsapp"></i> Chat Now</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
-function goToProductDetail(productId) {
-  window.location.href = 'product-detail.html?id=' + productId;
-}
-
-function goToCategory(category) {
-  window.location.href = 'products.html?category=' + category;
-}
-
-function goToAllProducts() {
-  window.location.href = 'products.html';
-}
-
+function goToProductDetail(productId) { window.location.href = 'product-detail.html?id=' + productId; }
+function goToCategory(category) { window.location.href = 'products.html?category=' + category; }
 function orderWhatsApp(productId, productTitle) {
   const phoneNumber = '15551234567';
   const userName = currentUser ? (currentUser.displayName || currentUser.email) : 'Guest';
   const userEmail = currentUser ? currentUser.email : 'Not logged in';
-  
-  const message = `🛒 *New Order*\n\n📦 ${productTitle}\n🆔 ID: ${productId}\n👤 ${userName}\n📧 ${userEmail}\n\nPlease send bulk pricing.`;
-  
-  database.ref('orders').push({
-    productId, productTitle, userName, userEmail,
-    userId: currentUser ? currentUser.uid : 'guest',
-    status: 'new',
-    createdAt: firebase.database.ServerValue.TIMESTAMP
-  });
-  
-  window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  database.ref('orders').push({ productId, productTitle, userName, userEmail, userId: currentUser ? currentUser.uid : 'guest', status: 'new', createdAt: firebase.database.ServerValue.TIMESTAMP });
+  window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(`🛒 *New Order*\n\n📦 ${productTitle}\n🆔 ID: ${productId}\n👤 ${userName}\n📧 ${userEmail}\n\nPlease send bulk pricing.`)}`, '_blank');
 }
-
-function escapeStr(str) {
-  if (!str) return '';
-  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
-}
+function escapeStr(str) { return str ? str.replace(/'/g, "\\'").replace(/"/g, '\\"') : ''; }
 
 function loginWithEmail() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   if (!email || !password) return alert('Fill all fields');
-  
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      closeModal('loginModal');
-      if (email === 'purevalue185@gmail.com') window.location.href = 'admin.html';
-    })
-    .catch(e => alert('Error: ' + e.message));
+  auth.signInWithEmailAndPassword(email, password).then(() => { closeModal('loginModal'); if (email === 'purevalue185@gmail.com') window.location.href = 'admin.html'; }).catch(e => alert('Error: ' + e.message));
 }
-
 function signupWithEmail() {
   const name = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
   if (!name || !email || !password) return alert('Fill all fields');
   if (password.length < 6) return alert('Password 6+ characters');
-  
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(r => r.user.updateProfile({ displayName: name }))
-    .then(() => { closeModal('signupModal'); alert('Account created!'); })
-    .catch(e => alert('Error: ' + e.message));
+  auth.createUserWithEmailAndPassword(email, password).then(r => r.user.updateProfile({ displayName: name })).then(() => { closeModal('signupModal'); alert('Account created!'); }).catch(e => alert('Error: ' + e.message));
 }
-
-function loginWithGoogle() {
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-    .then(() => closeModal('loginModal'))
-    .catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); });
-}
-
-function signupWithGoogle() {
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-    .then(() => closeModal('signupModal'))
-    .catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); });
-}
-
-function logout() {
-  auth.signOut().then(() => alert('Logged out'));
-}
+function loginWithGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(() => closeModal('loginModal')).catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); }); }
+function signupWithGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(() => closeModal('signupModal')).catch(e => { if (e.code !== 'auth/popup-closed-by-user') alert('Error: ' + e.message); }); }
+function logout() { auth.signOut().then(() => alert('Logged out')); }
 
 document.getElementById('sendInquiryBtn')?.addEventListener('click', () => {
   const name = document.getElementById('contactName').value.trim();
   const email = document.getElementById('contactEmail').value.trim();
   const message = document.getElementById('contactMessage').value.trim();
   if (!name || !email || !message) return alert('Fill all fields');
-  
-  database.ref('inquiries').push({
-    name, email, message, status: 'new',
-    createdAt: firebase.database.ServerValue.TIMESTAMP
-  }).then(() => {
-    alert('Message sent!');
-    document.getElementById('contactName').value = '';
-    document.getElementById('contactEmail').value = '';
-    document.getElementById('contactMessage').value = '';
-  });
+  database.ref('inquiries').push({ name, email, message, status: 'new', createdAt: firebase.database.ServerValue.TIMESTAMP }).then(() => { alert('Message sent!'); document.getElementById('contactName').value = ''; document.getElementById('contactEmail').value = ''; document.getElementById('contactMessage').value = ''; });
 });
 
-document.getElementById('heroSearchBtn')?.addEventListener('click', () => {
-  const q = document.getElementById('heroSearchInput').value.trim();
-  if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
-});
+document.getElementById('heroSearchBtn')?.addEventListener('click', () => { const q = document.getElementById('heroSearchInput').value.trim(); if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q); });
+document.getElementById('navSearchBtn')?.addEventListener('click', () => { const q = document.getElementById('navSearch').value.trim(); if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q); });
+document.getElementById('hamburgerBtn')?.addEventListener('click', () => { document.getElementById('navLinks').classList.toggle('show'); });
+document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }); });
 
-document.getElementById('navSearchBtn')?.addEventListener('click', () => {
-  const q = document.getElementById('navSearch').value.trim();
-  if (q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
-});
+window.openModal = openModal; window.closeModal = closeModal;
+window.loginWithEmail = loginWithEmail; window.signupWithEmail = signupWithEmail;
+window.loginWithGoogle = loginWithGoogle; window.signupWithGoogle = signupWithGoogle;
+window.logout = logout; window.goToProductDetail = goToProductDetail;
+window.goToCategory = goToCategory; window.orderWhatsApp = orderWhatsApp;
 
-document.getElementById('hamburgerBtn')?.addEventListener('click', () => {
-  document.getElementById('navLinks').classList.toggle('show');
-});
-
-document.querySelectorAll('.modal').forEach(modal => {
-  modal.addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('active');
-  });
-});
-
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.loginWithEmail = loginWithEmail;
-window.signupWithEmail = signupWithEmail;
-window.loginWithGoogle = loginWithGoogle;
-window.signupWithGoogle = signupWithGoogle;
-window.logout = logout;
-window.goToProductDetail = goToProductDetail;
-window.goToCategory = goToCategory;
-window.goToAllProducts = goToAllProducts;
-window.orderWhatsApp = orderWhatsApp;
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Homepage Ready');
-  loadProducts();
-});
+document.addEventListener('DOMContentLoaded', () => { console.log('Homepage Ready'); loadProducts(); });
