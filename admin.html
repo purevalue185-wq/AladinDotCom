@@ -11,7 +11,9 @@
     .dynamic-row{display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center}
     .dynamic-row input{flex:1;padding:0.5rem 0.7rem;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;font-size:0.9rem}
     .btn-add{background:#10b981;color:white;border:none;padding:0.4rem 1rem;border-radius:20px;cursor:pointer;font-size:0.85rem}
-    .btn-remove{background:#ef4444;color:white;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+    .btn-remove{background:#ef4444;color:white;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .btn-remove:hover{background:#dc2626}
+    .btn-add:hover{background:#059669}
   </style>
 </head>
 <body>
@@ -35,10 +37,17 @@
         <button class="btn btn-outline" onclick="auth.signOut().then(()=>location.href='index.html')">Logout</button>
       </header>
 
-      <div class="page-content active" id="dashboard-page"><h1>Dashboard</h1><div class="stats-grid"><div class="stat-card"><div class="stat-icon"><i class="fas fa-box"></i></div><div class="stat-info"><h3 id="totalProducts">0</h3><p>Products</p></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalOrders">0</h3><p>Orders</p></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-envelope"></i></div><div class="stat-info"><h3 id="totalInquiries">0</h3><p>Inquiries</p></div></div></div></div>
+      <div class="page-content active" id="dashboard-page">
+        <h1>Dashboard</h1>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-box"></i></div><div class="stat-info"><h3 id="totalProducts">0</h3><p>Products</p></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalOrders">0</h3><p>Orders</p></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="fas fa-envelope"></i></div><div class="stat-info"><h3 id="totalInquiries">0</h3><p>Inquiries</p></div></div>
+        </div>
+      </div>
 
       <div class="page-content" id="products-page">
-        <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;"><h1>Products</h1><button class="btn btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add</button></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;"><h1>Products</h1><button class="btn btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add Product</button></div>
         <div class="table-responsive"><table class="admin-table"><thead><tr><th>Img</th><th>Title</th><th>Category</th><th>MOQ</th><th>Price</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table></div>
       </div>
 
@@ -59,13 +68,13 @@
             <div class="form-group"><label>Reviews</label><input type="number" id="prodReviews" value="0"></div>
           </div>
           <div class="form-group full-width"><label>Description *</label><textarea id="prodDesc" rows="3" required></textarea></div>
-          <div class="form-group full-width"><label>Gallery Images (comma-separated)</label><input type="text" id="prodImages" placeholder="url1, url2, 🎧"></div>
+          <div class="form-group full-width"><label>Gallery Images (comma-separated URLs)</label><input type="text" id="prodImages" placeholder="url1, url2, url3"></div>
           
-          <div class="dynamic-section"><h3>📋 Specifications</h3><div id="specsContainer"><div class="dynamic-row"><input type="text" placeholder="Name (e.g. Brand)" class="spec-key"><input type="text" placeholder="Value (e.g. AudioTech)" class="spec-value"><button type="button" class="btn-remove" onclick="removeRow(this)"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addSpecRow()"><i class="fas fa-plus"></i> Add Specification</button></div>
+          <div class="dynamic-section"><h3>📋 Specifications</h3><div id="specsContainer"><div class="dynamic-row"><input type="text" placeholder="Name (e.g. Brand)" class="spec-key"><input type="text" placeholder="Value (e.g. AudioTech)" class="spec-value"><button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addSpecRow()"><i class="fas fa-plus"></i> Add Specification</button></div>
           
-          <div class="dynamic-section"><h3>💰 Bulk Pricing</h3><div id="pricingContainer"><div class="dynamic-row"><input type="text" placeholder="Quantity (e.g. 50-100)" class="price-qty"><input type="text" placeholder="Price (e.g. $6.80/unit)" class="price-value"><button type="button" class="btn-remove" onclick="removeRow(this)"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addPricingRow()"><i class="fas fa-plus"></i> Add Price Tier</button></div>
+          <div class="dynamic-section"><h3>💰 Bulk Pricing</h3><div id="pricingContainer"><div class="dynamic-row"><input type="text" placeholder="Quantity (e.g. 50-100)" class="price-qty"><input type="text" placeholder="Price (e.g. $6.80/unit)" class="price-value"><button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addPricingRow()"><i class="fas fa-plus"></i> Add Price Tier</button></div>
           
-          <div class="form-actions"><button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</button><button type="button" class="btn btn-outline btn-lg" onclick="showProducts()">Cancel</button></div>
+          <div class="form-actions"><button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save Product</button><button type="button" class="btn btn-outline btn-lg" onclick="showProducts()">Cancel</button></div>
         </form>
       </div>
 
