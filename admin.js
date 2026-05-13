@@ -1,11 +1,11 @@
 // ==========================================
-// ALADINDOTCOM - ADMIN PANEL
+// ALADINDOTCOM - ADMIN PANEL (FINAL)
 // ==========================================
 
 let isEditing = false;
 let editingProductId = null;
 
-// Auth check
+// Check admin access
 auth.onAuthStateChanged(user => {
   if (!user || user.email !== 'purevalue185@gmail.com') {
     alert('Access denied! Admin only.');
@@ -18,7 +18,7 @@ auth.onAuthStateChanged(user => {
 });
 
 // ==========================================
-// DYNAMIC FORM
+// ADD DYNAMIC ROWS
 // ==========================================
 function addSpecRow() {
   const container = document.getElementById('specsContainer');
@@ -44,6 +44,9 @@ function addPricingRow() {
   container.appendChild(row);
 }
 
+// ==========================================
+// GET FORM DATA
+// ==========================================
 function getSpecs() {
   const specs = {};
   document.querySelectorAll('#specsContainer .dynamic-row').forEach(row => {
@@ -67,38 +70,27 @@ function getPrices() {
 // ==========================================
 // NAVIGATION
 // ==========================================
+function goToPage(pageName) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageName + '-page').classList.add('active');
+  
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`[data-page="${pageName}"]`);
+  if (navItem) navItem.classList.add('active');
+  
+  if (pageName === 'products') renderProductsTable();
+  if (pageName === 'dashboard') updateStats();
+  if (pageName === 'orders') renderOrders();
+  if (pageName === 'inquiries') renderInquiries();
+  if (pageName === 'add-product' && !isEditing) resetForm();
+}
+
 document.querySelectorAll('.nav-item[data-page]').forEach(item => {
   item.addEventListener('click', function(e) {
     e.preventDefault();
-    const page = this.dataset.page;
-    switchPage(page);
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    this.classList.add('active');
+    goToPage(this.dataset.page);
   });
 });
-
-function switchPage(page) {
-  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-  document.getElementById(page + '-page').classList.add('active');
-  
-  if (page === 'products') renderProductsTable();
-  if (page === 'dashboard') updateStats();
-  if (page === 'orders') renderOrders();
-  if (page === 'inquiries') renderInquiries();
-  if (page === 'add-product') resetForm();
-}
-
-function showProducts() {
-  switchPage('products');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelector('[data-page="products"]').classList.add('active');
-}
-
-function showAddProduct() {
-  switchPage('add-product');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelector('[data-page="add-product"]').classList.add('active');
-}
 
 // ==========================================
 // RENDER PRODUCTS TABLE
@@ -106,21 +98,26 @@ function showAddProduct() {
 function renderProductsTable() {
   database.ref('products').once('value').then(snapshot => {
     const data = snapshot.val();
-    const products = data ? Object.values(data).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)) : [];
+    const products = data ? Object.values(data) : [];
+    
+    // Sort by newest first
+    products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     
     const tbody = document.getElementById('productsTableBody');
     
     if (products.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No products found</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;">No products found. Click "Add Product" to create one.</td></tr>';
       return;
     }
     
     tbody.innerHTML = products.map(p => {
-      let imgHTML = '<span style="font-size:2rem;">📦</span>';
+      let imgHTML;
       if (p.img && p.img.startsWith('http')) {
         imgHTML = `<img src="${p.img}" style="width:50px;height:50px;object-fit:cover;border-radius:5px;" onerror="this.innerHTML='📦'">`;
       } else if (p.img) {
         imgHTML = `<span style="font-size:2rem;">${p.img}</span>`;
+      } else {
+        imgHTML = '<span style="font-size:2rem;">📦</span>';
       }
       
       return `
@@ -131,49 +128,38 @@ function renderProductsTable() {
         <td>${p.moq || 'N/A'}</td>
         <td>${p.price || 'N/A'}</td>
         <td>
-          <button class="btn btn-primary btn-sm edit-btn" data-id="${p.id}" style="padding:0.3rem 0.8rem;font-size:0.8rem;margin-right:0.3rem;">Edit</button>
-          <button class="btn btn-outline btn-sm delete-btn" data-id="${p.id}" style="padding:0.3rem 0.8rem;font-size:0.8rem;color:red;border-color:red;">Del</button>
+          <button onclick="editProductClick('${p.id}')" style="background:#2563EB;color:white;border:none;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:13px;margin-right:5px;">Edit</button>
+          <button onclick="deleteProductClick('${p.id}')" style="background:white;color:#EF4444;border:1px solid #EF4444;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:13px;">Delete</button>
         </td>
       </tr>`;
     }).join('');
-    
-    // Add event listeners AFTER rendering
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-        console.log('Edit button clicked for ID:', id);
-        loadProductForEdit(id);
-      });
-    });
-    
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-        deleteProduct(id);
-      });
-    });
   });
 }
 
 // ==========================================
-// LOAD PRODUCT FOR EDITING
+// EDIT PRODUCT (GLOBAL FUNCTION)
 // ==========================================
-function loadProductForEdit(id) {
-  console.log('Loading product for edit, ID:', id);
+window.editProductClick = function(id) {
+  console.log('Editing product ID:', id);
+  isEditing = true;
+  editingProductId = id;
   
   database.ref('products/' + id).once('value').then(snapshot => {
     const p = snapshot.val();
-    console.log('Product data loaded:', p);
     
     if (!p) {
-      alert('Product not found in database!');
+      alert('Product not found!');
       return;
     }
     
-    isEditing = true;
-    editingProductId = id;
+    // Go to add-product page
+    document.querySelectorAll('.page-content').forEach(pg => pg.classList.remove('active'));
+    document.getElementById('add-product-page').classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector('[data-page="add-product"]').classList.add('active');
     
-    document.getElementById('formTitle').textContent = 'Edit: ' + (p.title || 'Product');
+    // Fill form
+    document.getElementById('formTitle').textContent = 'Edit Product: ' + p.title;
     document.getElementById('productId').value = id;
     document.getElementById('prodTitle').value = p.title || '';
     document.getElementById('prodCategory').value = p.category || '';
@@ -188,57 +174,54 @@ function loadProductForEdit(id) {
     document.getElementById('prodDesc').value = p.desc || '';
     document.getElementById('prodImages').value = (p.images || []).join(', ');
     
-    // Fill specifications
+    // Fill Specifications
     const specsContainer = document.getElementById('specsContainer');
     specsContainer.innerHTML = '';
     const specs = p.specifications || {};
-    const specEntries = Object.entries(specs);
-    if (specEntries.length === 0) {
+    if (Object.keys(specs).length === 0) {
       addSpecRow();
     } else {
-      specEntries.forEach(([key, value]) => {
+      Object.entries(specs).forEach(([key, value]) => {
         const row = document.createElement('div');
         row.className = 'dynamic-row';
         row.innerHTML = `
           <input type="text" class="spec-key" value="${key.replace(/"/g, '&quot;')}">
-          <input type="text" class="spec-value" value="${value.replace(/"/g, '&quot;')}">
+          <input type="text" class="spec-value" value="${String(value).replace(/"/g, '&quot;')}">
           <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
         `;
         specsContainer.appendChild(row);
       });
     }
     
-    // Fill bulk pricing
+    // Fill Bulk Pricing
     const pricingContainer = document.getElementById('pricingContainer');
     pricingContainer.innerHTML = '';
     const prices = p.bulkPrices || [];
     if (prices.length === 0) {
       addPricingRow();
     } else {
-      prices.forEach(price => {
+      prices.forEach(bp => {
         const row = document.createElement('div');
         row.className = 'dynamic-row';
         row.innerHTML = `
-          <input type="text" class="price-qty" value="${price.qty}">
-          <input type="text" class="price-value" value="${price.price}">
+          <input type="text" class="price-qty" value="${bp.qty}">
+          <input type="text" class="price-value" value="${bp.price}">
           <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
         `;
         pricingContainer.appendChild(row);
       });
     }
-    
-    showAddProduct();
   }).catch(error => {
-    console.error('Error loading product:', error);
-    alert('Error loading product: ' + error.message);
+    console.error('Error:', error);
+    alert('Error loading product!');
   });
-}
+};
 
 // ==========================================
 // DELETE PRODUCT
 // ==========================================
-function deleteProduct(id) {
-  if (confirm('Delete this product permanently?')) {
+window.deleteProductClick = function(id) {
+  if (confirm('Are you sure you want to delete this product? This cannot be undone.')) {
     database.ref('products/' + id).remove()
       .then(() => {
         alert('Product deleted!');
@@ -249,7 +232,7 @@ function deleteProduct(id) {
         alert('Error: ' + error.message);
       });
   }
-}
+};
 
 // ==========================================
 // RESET FORM
@@ -302,42 +285,91 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     product.createdAt = firebase.database.ServerValue.TIMESTAMP;
   }
   
-  console.log('Saving product:', product);
-  
   database.ref('products/' + product.id).set(product)
     .then(() => {
-      alert(isEditing ? 'Product updated!' : 'Product added!');
+      alert(isEditing ? '✅ Product updated successfully!' : '✅ Product added successfully!');
       resetForm();
-      showProducts();
+      document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+      document.getElementById('products-page').classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelector('[data-page="products"]').classList.add('active');
+      renderProductsTable();
+      updateStats();
     })
     .catch(error => {
-      alert('Error: ' + error.message);
+      console.error('Save error:', error);
+      alert('❌ Error saving: ' + error.message);
     });
 });
 
 // ==========================================
-// ORDERS & INQUIRIES
+// CANCEL BUTTON
+// ==========================================
+document.getElementById('cancelBtn')?.addEventListener('click', function() {
+  resetForm();
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById('products-page').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-page="products"]').classList.add('active');
+});
+
+// ==========================================
+// SHOW ADD PRODUCT (from Products page)
+// ==========================================
+window.showAddProduct = function() {
+  resetForm();
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById('add-product-page').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-page="add-product"]').classList.add('active');
+};
+
+// ==========================================
+// ORDERS
 // ==========================================
 function renderOrders() {
   database.ref('orders').orderByChild('createdAt').limitToLast(50).once('value').then(snapshot => {
     const data = snapshot.val();
-    const orders = data ? Object.entries(data).map(([k, v]) => ({ id: k, ...v })).reverse() : [];
+    const orders = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse() : [];
+    
     document.getElementById('ordersTableBody').innerHTML = orders.length === 0 ?
-      '<tr><td colspan="5">No orders</td></tr>' :
-      orders.map(o => `<tr><td>${o.createdAt?new Date(o.createdAt).toLocaleDateString():''}</td><td>${o.productTitle||''}</td><td>${o.userName||'Guest'}</td><td>${o.userEmail||''}</td><td>${o.status||'new'}</td></tr>`).join('');
+      '<tr><td colspan="5" style="text-align:center;padding:2rem;">No orders yet</td></tr>' :
+      orders.map(o => `
+        <tr>
+          <td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A'}</td>
+          <td>${o.productTitle || 'N/A'}</td>
+          <td>${o.userName || 'Guest'}</td>
+          <td>${o.userEmail || 'N/A'}</td>
+          <td><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:12px;">${o.status || 'new'}</span></td>
+        </tr>
+      `).join('');
   });
 }
 
+// ==========================================
+// INQUIRIES
+// ==========================================
 function renderInquiries() {
   database.ref('inquiries').orderByChild('createdAt').limitToLast(50).once('value').then(snapshot => {
     const data = snapshot.val();
-    const inqs = data ? Object.entries(data).map(([k, v]) => ({ id: k, ...v })).reverse() : [];
-    document.getElementById('inquiriesTableBody').innerHTML = inqs.length === 0 ?
-      '<tr><td colspan="4">No inquiries</td></tr>' :
-      inqs.map(i => `<tr><td>${i.createdAt?new Date(i.createdAt).toLocaleDateString():''}</td><td>${i.name||''}</td><td>${i.email||''}</td><td>${(i.message||'').substring(0,50)}...</td></tr>`).join('');
+    const inquiries = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse() : [];
+    
+    document.getElementById('inquiriesTableBody').innerHTML = inquiries.length === 0 ?
+      '<tr><td colspan="4" style="text-align:center;padding:2rem;">No inquiries yet</td></tr>' :
+      inquiries.map(i => `
+        <tr>
+          <td>${i.createdAt ? new Date(i.createdAt).toLocaleDateString() : 'N/A'}</td>
+          <td>${i.name || 'N/A'}</td>
+          <td>${i.email || 'N/A'}</td>
+          <td>${(i.message || '').substring(0, 50)}...</td>
+        </tr>
+      `).join('');
   });
 }
 
+// ==========================================
+// STATS
+// ==========================================
 function updateStats() {
   database.ref('products').once('value').then(s => {
     document.getElementById('totalProducts').textContent = s.exists() ? Object.keys(s.val()).length : 0;
@@ -350,11 +382,9 @@ function updateStats() {
   });
 }
 
-// Global functions
+// Global
 window.addSpecRow = addSpecRow;
 window.addPricingRow = addPricingRow;
-window.showProducts = showProducts;
-window.showAddProduct = showAddProduct;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
