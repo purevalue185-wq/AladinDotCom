@@ -6,14 +6,18 @@
   <title>Admin Dashboard | AladinDotCom</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .dynamic-section{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem}
+    .dynamic-row{display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center}
+    .dynamic-row input{flex:1;padding:0.5rem 0.7rem;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;font-size:0.9rem}
+    .btn-add{background:#10b981;color:white;border:none;padding:0.4rem 1rem;border-radius:20px;cursor:pointer;font-size:0.85rem}
+    .btn-remove{background:#ef4444;color:white;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+  </style>
 </head>
 <body>
   <div class="admin-container">
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <h2>Aladin<span>Admin</span></h2>
-        <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-times"></i></button>
-      </div>
+      <div class="sidebar-header"><h2>Aladin<span>Admin</span></h2></div>
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
         <a href="#" class="nav-item" data-page="products"><i class="fas fa-box"></i> Products</a>
@@ -31,64 +35,42 @@
         <button class="btn btn-outline" onclick="auth.signOut().then(()=>location.href='index.html')">Logout</button>
       </header>
 
-      <div class="page-content active" id="dashboard-page">
-        <h1>Dashboard</h1>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon"><i class="fas fa-box"></i></div><div class="stat-info"><h3 id="totalProducts">0</h3><p>Products</p></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalOrders">0</h3><p>Orders</p></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="fas fa-envelope"></i></div><div class="stat-info"><h3 id="totalInquiries">0</h3><p>Inquiries</p></div></div>
-        </div>
-      </div>
+      <div class="page-content active" id="dashboard-page"><h1>Dashboard</h1><div class="stats-grid"><div class="stat-card"><div class="stat-icon"><i class="fas fa-box"></i></div><div class="stat-info"><h3 id="totalProducts">0</h3><p>Products</p></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalOrders">0</h3><p>Orders</p></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-envelope"></i></div><div class="stat-info"><h3 id="totalInquiries">0</h3><p>Inquiries</p></div></div></div></div>
 
       <div class="page-content" id="products-page">
-        <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
-          <h1>Products</h1>
-          <button class="btn btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add</button>
-        </div>
-        <div class="table-responsive">
-          <table class="admin-table"><thead><tr><th>Img</th><th>Title</th><th>Category</th><th>MOQ</th><th>Price</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table>
-        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;"><h1>Products</h1><button class="btn btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add</button></div>
+        <div class="table-responsive"><table class="admin-table"><thead><tr><th>Img</th><th>Title</th><th>Category</th><th>MOQ</th><th>Price</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table></div>
       </div>
 
       <div class="page-content" id="add-product-page">
-        <h1 id="formTitle">Add Product</h1>
+        <h1 id="formTitle">Add New Product</h1>
         <form id="productForm" class="product-form">
           <input type="hidden" id="productId">
           <div class="form-grid">
             <div class="form-group"><label>Title *</label><input type="text" id="prodTitle" required></div>
             <div class="form-group"><label>Category *</label><select id="prodCategory" required><option value="">Select</option><option value="electronics">Electronics</option><option value="kitchen">Kitchen</option><option value="beauty">Beauty</option><option value="household">Household</option><option value="packaging">Packaging</option><option value="industrial">Industrial</option></select></div>
-            <div class="form-group"><label>Emoji *</label><input type="text" id="prodImg" required placeholder="🎧"></div>
+            <div class="form-group"><label>Image URL</label><input type="text" id="prodImageUrl" placeholder="https://..."></div>
+            <div class="form-group"><label>or Emoji</label><input type="text" id="prodImg" placeholder="🎧"></div>
             <div class="form-group"><label>MOQ *</label><input type="text" id="prodMoq" required></div>
-            <div class="form-group"><label>Price Range *</label><input type="text" id="prodPrice" required></div>
+            <div class="form-group"><label>Price *</label><input type="text" id="prodPrice" required></div>
             <div class="form-group"><label>Supplier</label><input type="text" id="prodSupplier"></div>
             <div class="form-group"><label>Shipping</label><input type="text" id="prodShipping"></div>
-            <div class="form-group"><label>Rating</label><input type="number" id="prodRating" value="4.5" step="0.1" min="0" max="5"></div>
+            <div class="form-group"><label>Rating</label><input type="number" id="prodRating" value="4.5" step="0.1"></div>
             <div class="form-group"><label>Reviews</label><input type="number" id="prodReviews" value="0"></div>
           </div>
           <div class="form-group full-width"><label>Description *</label><textarea id="prodDesc" rows="3" required></textarea></div>
-          <div class="form-group full-width"><label>Gallery Images (comma emojis)</label><input type="text" id="prodImages" placeholder="🎧, 🔊"></div>
-          <div class="form-group full-width"><label>Specifications (JSON)</label><textarea id="prodSpecs" rows="2">{}</textarea></div>
-          <div class="form-group full-width"><label>Bulk Prices (JSON)</label><textarea id="prodBulkPrices" rows="2">[]</textarea></div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-outline" onclick="showProducts()">Cancel</button>
-          </div>
+          <div class="form-group full-width"><label>Gallery Images (comma-separated)</label><input type="text" id="prodImages" placeholder="url1, url2, 🎧"></div>
+          
+          <div class="dynamic-section"><h3>📋 Specifications</h3><div id="specsContainer"><div class="dynamic-row"><input type="text" placeholder="Name (e.g. Brand)" class="spec-key"><input type="text" placeholder="Value (e.g. AudioTech)" class="spec-value"><button type="button" class="btn-remove" onclick="removeRow(this)"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addSpecRow()"><i class="fas fa-plus"></i> Add Specification</button></div>
+          
+          <div class="dynamic-section"><h3>💰 Bulk Pricing</h3><div id="pricingContainer"><div class="dynamic-row"><input type="text" placeholder="Quantity (e.g. 50-100)" class="price-qty"><input type="text" placeholder="Price (e.g. $6.80/unit)" class="price-value"><button type="button" class="btn-remove" onclick="removeRow(this)"><i class="fas fa-times"></i></button></div></div><button type="button" class="btn-add" onclick="addPricingRow()"><i class="fas fa-plus"></i> Add Price Tier</button></div>
+          
+          <div class="form-actions"><button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</button><button type="button" class="btn btn-outline btn-lg" onclick="showProducts()">Cancel</button></div>
         </form>
       </div>
 
-      <div class="page-content" id="orders-page">
-        <h1>Orders</h1>
-        <div class="table-responsive">
-          <table class="admin-table"><thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Email</th><th>Status</th></tr></thead><tbody id="ordersTableBody"></tbody></table>
-        </div>
-      </div>
-
-      <div class="page-content" id="inquiries-page">
-        <h1>Inquiries</h1>
-        <div class="table-responsive">
-          <table class="admin-table"><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th></tr></thead><tbody id="inquiriesTableBody"></tbody></table>
-        </div>
-      </div>
+      <div class="page-content" id="orders-page"><h1>Orders</h1><div class="table-responsive"><table class="admin-table"><thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Email</th><th>Status</th></tr></thead><tbody id="ordersTableBody"></tbody></table></div></div>
+      <div class="page-content" id="inquiries-page"><h1>Inquiries</h1><div class="table-responsive"><table class="admin-table"><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th></tr></thead><tbody id="inquiriesTableBody"></tbody></table></div></div>
     </main>
   </div>
 
