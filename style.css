@@ -1,3 +1,160 @@
+/* Alibaba-style Top Header Bar */
+.nav-top-bar {
+  background: #F2F2F2;
+  padding: 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.nav-top-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-top-bar a {
+  color: #666;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+/* Main Navbar - White with Red */
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 8px 0;
+}
+
+/* Search Bar - Alibaba Style */
+.search-bar {
+  border: 2px solid #E31E24;
+  border-radius: 3px;
+  display: flex;
+  overflow: hidden;
+  flex: 1;
+  max-width: 600px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar button {
+  background: #E31E24;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Hero - Dark with Product Categories Sidebar */
+.hero {
+  background: #f5f5f5;
+  padding: 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+}
+
+.hero-categories {
+  background: white;
+  padding: 10px 0;
+  border-right: 1px solid #e8e8e8;
+}
+
+.hero-categories a {
+  display: block;
+  padding: 8px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.hero-categories a:hover {
+  background: #f5f5f5;
+  color: #E31E24;
+}
+
+.hero-main {
+  padding: 30px;
+  background: linear-gradient(135deg, #fff 0%, #fef0f0 100%);
+}
+
+/* Product Cards - Clean with Price Highlight */
+.product-card {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+.product-card:hover {
+  border-color: #E31E24;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.product-img {
+  height: 200px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.price-range {
+  font-size: 18px;
+  font-weight: 700;
+  color: #E31E24;
+}
+
+.moq-badge {
+  background: #FFF3E0;
+  color: #E65100;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* Footer - Dark */
+footer {
+  background: #333;
+  color: #ccc;
+  padding: 30px 0;
+}
+
+/* Category Filter Pills */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.filter-btn {
+  padding: 6px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background: #E31E24;
+  color: white;
+  border-color: #E31E24;
+}
+
+
 * {
   margin: 0;
   padding: 0;
