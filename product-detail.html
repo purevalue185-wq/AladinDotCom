@@ -8,43 +8,119 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span>Welcome to AladinDotCom</span>
+        <a href="#">My AladinDotCom</a>
+        <a href="#">Orders</a>
+        <a href="#">Cart</a>
+      </div>
+      <div class="top-bar-right">
+        <a href="#">Help</a>
+        <a href="#">English</a>
+        <a href="#">USD</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo"><span class="logo-text">Aladin<span>DotCom</span></span></a>
-      <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="products.html">Top Deals</a>
-        <a href="index.html#categories">Categories</a>
-        <span id="userDisplay" style="display:none;"></span>
-        <button class="btn login-btn" id="loginBtn" onclick="openModal('loginModal')">Sign In</button>
-        <button class="btn btn-primary" id="signupBtn" onclick="openModal('signupModal')">Join Free</button>
-        <button class="btn btn-outline" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+      <div class="search-bar">
+        <input type="text" placeholder="What are you looking for..." id="navSearch">
+        <button id="navSearchBtn"><i class="fas fa-search"></i></button>
       </div>
+      <div class="nav-actions">
+        <span id="userDisplay" style="display:none;font-size:13px;"></span>
+        <button class="btn btn-white" id="loginBtn" onclick="openModal('loginModal')">Sign In</button>
+        <button class="btn btn-red" id="signupBtn" onclick="openModal('signupModal')">Join Free</button>
+        <button class="btn btn-white" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+      </div>
+      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
     </div>
   </nav>
 
-  <div class="container" style="padding:1rem 0;">
+  <!-- CATEGORY NAV -->
+  <div class="category-nav">
+    <div class="container">
+      <div class="category-nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">All Products</a>
+        <a href="products.html?category=electronics">Electronics</a>
+        <a href="products.html?category=kitchen">Kitchen</a>
+        <a href="products.html?category=beauty">Beauty</a>
+        <a href="products.html?category=household">Household</a>
+        <a href="products.html?category=packaging">Packaging</a>
+        <a href="products.html?category=industrial">Industrial</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="container" style="padding:10px 0;">
     <div class="breadcrumb">
       <a href="index.html">Home</a> / <a href="products.html">Products</a> / <span id="breadcrumbTitle">Product Details</span>
     </div>
   </div>
 
+  <!-- PRODUCT DETAIL -->
   <section class="container">
     <div id="productDetailContent"></div>
   </section>
 
-  <section class="container" style="margin-top:2rem;">
-    <h3 style="margin-bottom:1rem;">Related Products</h3>
+  <!-- RELATED PRODUCTS -->
+  <section class="container section-padding">
+    <div class="section-header-bar">
+      <h2>Related Products</h2>
+      <a href="products.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
     <div class="products-grid" id="relatedProducts"></div>
   </section>
 
-  <footer style="margin-top:3rem;">
-    <div class="container footer-container">
-      <div><strong>AladinDotCom</strong></div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Get Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Report Abuse</a>
+          <a href="#">Submit Dispute</a>
+        </div>
+        <div class="footer-col">
+          <h4>Trade Services</h4>
+          <a href="#">Trade Assurance</a>
+          <a href="#">Logistics Service</a>
+          <a href="#">Inspection Service</a>
+          <a href="#">Letter of Credit</a>
+        </div>
+        <div class="footer-col">
+          <h4>About Us</h4>
+          <a href="#">About AladinDotCom</a>
+          <a href="#">Partners</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+          <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+          <a href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 AladinDotCom. All rights reserved. AladinDotCom B2B Wholesale Marketplace</p>
+      </div>
     </div>
-    <div class="container copyright"><p>&copy; 2025 AladinDotCom</p></div>
   </footer>
 
+  <!-- LOGIN MODAL -->
   <div class="modal" id="loginModal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
@@ -52,14 +128,15 @@
       <div class="auth-form">
         <input type="email" id="loginEmail" placeholder="Email">
         <input type="password" id="loginPassword" placeholder="Password">
-        <button class="btn btn-primary btn-full" onclick="loginWithEmail()">Sign In</button>
+        <button class="btn btn-red btn-full" onclick="loginWithEmail()">Sign In</button>
         <div class="divider">or</div>
-        <button class="btn btn-outline btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
+        <button class="btn btn-white btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
       </div>
-      <p style="text-align:center;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')" style="color:var(--secondary);">Join Free</a></p>
+      <p style="text-align:center;font-size:13px;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')" style="color:var(--red);">Join Free</a></p>
     </div>
   </div>
 
+  <!-- SIGNUP MODAL -->
   <div class="modal" id="signupModal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeModal('signupModal')">&times;</button>
@@ -68,10 +145,11 @@
         <input type="text" id="signupName" placeholder="Full Name">
         <input type="email" id="signupEmail" placeholder="Email">
         <input type="password" id="signupPassword" placeholder="Password">
-        <button class="btn btn-primary btn-full" onclick="signupWithEmail()">Create Account</button>
+        <button class="btn btn-red btn-full" onclick="signupWithEmail()">Create Account</button>
         <div class="divider">or</div>
-        <button class="btn btn-outline btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
+        <button class="btn btn-white btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
       </div>
+      <p style="text-align:center;font-size:13px;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')" style="color:var(--red);">Sign In</a></p>
     </div>
   </div>
 
