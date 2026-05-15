@@ -3,44 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top Deals | AladinDotCom</title>
+  <title>All Products | AladinDotCom B2B Marketplace</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span>Welcome to AladinDotCom</span>
+        <a href="#">My AladinDotCom</a>
+        <a href="#">Orders</a>
+        <a href="#">Cart</a>
+      </div>
+      <div class="top-bar-right">
+        <a href="#">Help</a>
+        <a href="#">English</a>
+        <a href="#">USD</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo"><span class="logo-text">Aladin<span>DotCom</span></span></a>
-      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-      <div class="nav-links" id="navLinks">
-        <a href="index.html">Home</a>
-        <a href="products.html">Top Deals</a>
-        <a href="index.html#categories">Categories</a>
-        <a href="index.html#contact">Contact</a>
-        <div class="search-bar">
-          <input type="text" placeholder="Search products..." id="productSearchInput" value="">
-          <button id="productSearchBtn"><i class="fas fa-search"></i></button>
-        </div>
-        <span id="userDisplay" style="display:none;font-weight:600;font-size:0.85rem;"></span>
-        <button class="btn login-btn" id="loginBtn" onclick="openModal('loginModal')">Sign In</button>
-        <button class="btn btn-primary" id="signupBtn" onclick="openModal('signupModal')">Join Free</button>
-        <button class="btn btn-outline" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+      <div class="search-bar">
+        <input type="text" placeholder="What are you looking for..." id="productSearchInput" value="">
+        <button id="productSearchBtn"><i class="fas fa-search"></i></button>
       </div>
+      <div class="nav-actions">
+        <span id="userDisplay" style="display:none;font-size:13px;"></span>
+        <button class="btn btn-white" id="loginBtn" onclick="openModal('loginModal')">Sign In</button>
+        <button class="btn btn-red" id="signupBtn" onclick="openModal('signupModal')">Join Free</button>
+        <button class="btn btn-white" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+      </div>
+      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
     </div>
   </nav>
 
-  <!-- Top Deals Banner -->
-  <section style="background:linear-gradient(135deg,#ff6a00,#ee0979);color:white;padding:2rem 0;">
+  <!-- CATEGORY NAV -->
+  <div class="category-nav">
     <div class="container">
-      <h1 style="font-size:2rem;margin-bottom:0.3rem;">🔥 Top Deals</h1>
-      <p style="font-size:1rem;opacity:0.9;">Limited time offers from verified suppliers</p>
+      <div class="category-nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html" class="active">All Products</a>
+        <a href="products.html?category=electronics">Electronics</a>
+        <a href="products.html?category=kitchen">Kitchen</a>
+        <a href="products.html?category=beauty">Beauty</a>
+        <a href="products.html?category=household">Household</a>
+        <a href="products.html?category=packaging">Packaging</a>
+        <a href="products.html?category=industrial">Industrial</a>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Deals Grid -->
+  <!-- PRODUCTS SECTION -->
   <section class="container section-padding">
+    <div class="section-title">
+      <h2 id="pageTitle">All Products</h2>
+      <p id="pageSubtitle">Browse our complete wholesale catalog</p>
+    </div>
+
     <div class="category-filter">
-      <button class="filter-btn active" data-category="all">All Deals</button>
+      <button class="filter-btn active" data-category="all">All</button>
       <button class="filter-btn" data-category="electronics">Electronics</button>
       <button class="filter-btn" data-category="kitchen">Kitchen</button>
       <button class="filter-btn" data-category="beauty">Beauty</button>
@@ -49,24 +77,87 @@
       <button class="filter-btn" data-category="industrial">Industrial</button>
     </div>
 
-    <div class="result-count" id="resultCount" style="margin-bottom:1.5rem;">Showing <strong>0</strong> products</div>
+    <div class="result-count" id="resultCount">Showing <strong>0</strong> products</div>
 
-    <!-- Alibaba-style Product Cards -->
-    <div class="deals-grid" id="allProductsContainer">
+    <div class="products-grid" id="allProductsContainer">
       <div style="text-align:center;grid-column:1/-1;padding:3rem;">
-        <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--secondary);"></i>
-        <p>Loading deals...</p>
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--red);"></i>
+        <p style="margin-top:0.5rem;color:#666;">Loading products...</p>
       </div>
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer>
-    <div class="container footer-container">
-      <div><strong>AladinDotCom</strong><p>B2B Wholesale Marketplace</p></div>
-      <div class="footer-links"><a href="index.html">Home</a><a href="products.html">Top Deals</a></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Get Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Report Abuse</a>
+          <a href="#">Submit Dispute</a>
+        </div>
+        <div class="footer-col">
+          <h4>Trade Services</h4>
+          <a href="#">Trade Assurance</a>
+          <a href="#">Logistics Service</a>
+          <a href="#">Inspection Service</a>
+          <a href="#">Letter of Credit</a>
+        </div>
+        <div class="footer-col">
+          <h4>About Us</h4>
+          <a href="#">About AladinDotCom</a>
+          <a href="#">Partners</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+          <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+          <a href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 AladinDotCom. All rights reserved. AladinDotCom B2B Wholesale Marketplace</p>
+      </div>
     </div>
-    <div class="container copyright"><p>&copy; 2025 AladinDotCom</p></div>
   </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
+      <h2>Sign In</h2>
+      <div class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="btn btn-red btn-full" onclick="loginWithEmail()">Sign In</button>
+        <div class="divider">or</div>
+        <button class="btn btn-white btn-full" onclick="loginWithGoogle()"><i class="fab fa-google"></i> Google</button>
+      </div>
+      <p style="text-align:center;font-size:13px;">No account? <a href="#" onclick="closeModal('loginModal');openModal('signupModal')" style="color:var(--red);">Join Free</a></p>
+    </div>
+  </div>
+
+  <!-- SIGNUP MODAL -->
+  <div class="modal" id="signupModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('signupModal')">&times;</button>
+      <h2>Join Free</h2>
+      <div class="auth-form">
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <button class="btn btn-red btn-full" onclick="signupWithEmail()">Create Account</button>
+        <div class="divider">or</div>
+        <button class="btn btn-white btn-full" onclick="signupWithGoogle()"><i class="fab fa-google"></i> Google</button>
+      </div>
+      <p style="text-align:center;font-size:13px;">Have account? <a href="#" onclick="closeModal('signupModal');openModal('loginModal')" style="color:var(--red);">Sign In</a></p>
+    </div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
