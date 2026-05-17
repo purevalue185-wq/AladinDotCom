@@ -1,15 +1,11 @@
 // ==========================================
-// ALADINDOTCOM - PRODUCT DETAIL PAGE
-// FINAL WORKING VERSION
+// ALADINDOTCOM - PRODUCT DETAIL PAGE (UPGRADED)
 // ==========================================
 
 let currentUser = null;
 let currentProduct = null;
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
-
-console.log('=== PRODUCT DETAIL PAGE ===');
-console.log('Product ID from URL:', productId);
 
 auth.onAuthStateChanged(user => {
   currentUser = user;
@@ -35,73 +31,39 @@ function updateUI() {
 }
 
 function loadProductDetail() {
-  console.log('Loading product detail...');
-  
   if (!productId) {
-    showError('No product ID specified.');
+    showError('Product not found.');
     return;
   }
-  
-  // Load ALL products and find the matching one
-  database.ref('products').once('value')
-    .then(snapshot => {
-      const data = snapshot.val();
-      console.log('All products data:', data);
-      
-      if (!data) {
-        showError('No products found in database.');
-        return;
-      }
-      
-      // Get all products as array
-      const allProducts = Object.values(data);
-      console.log('Products array:', allProducts);
-      
-      // Find product by ID (try both string and number comparison)
-      const product = allProducts.find(p => {
-        return String(p.id) === String(productId) || p.id == productId;
-      });
-      
-      console.log('Found product:', product);
-      
-      if (!product) {
-        showError('Product not found. ID: ' + productId);
-        return;
-      }
-      
-      currentProduct = product;
-      document.title = (product.title || 'Product') + ' - AladinDotCom';
-      
-      const breadcrumb = document.getElementById('breadcrumbTitle');
-      if (breadcrumb) breadcrumb.textContent = product.title || 'Product Details';
-      
-      renderProductDetail(product);
-      loadRelatedProducts(product);
-    })
-    .catch(error => {
-      console.error('Error loading products:', error);
-      showError('Error loading product. Please check console.');
-    });
+  database.ref('products/' + productId).once('value').then(snapshot => {
+    const product = snapshot.val();
+    if (!product) {
+      showError('Product not found.');
+      return;
+    }
+    currentProduct = product;
+    document.title = product.title + ' - AladinDotCom';
+    document.getElementById('breadcrumbTitle').textContent = product.title;
+    renderProductDetail(product);
+    loadRelatedProducts(product.category, product.id);
+  });
 }
 
 function showError(msg) {
   document.getElementById('productDetailContent').innerHTML = `
-    <div style="text-align:center;padding:40px;background:white;border:1px solid #e8e8e8;border-radius:4px;">
-      <i class="fas fa-exclamation-circle" style="font-size:50px;color:#ccc;"></i>
-      <h2 style="margin:15px 0;color:#333;">${msg}</h2>
-      <p style="color:#666;margin-bottom:20px;">The product you're looking for might have been removed.</p>
+    <div style="text-align:center;padding:3rem;background:white;border:1px solid #e8e8e8;border-radius:3px;">
+      <i class="fas fa-exclamation-circle" style="font-size:3rem;color:#999;"></i>
+      <h2 style="margin:1rem 0;">${msg}</h2>
       <a href="products.html" class="btn btn-red">Browse Products</a>
-      <a href="index.html" class="btn btn-white" style="margin-left:10px;">Go Home</a>
     </div>`;
 }
 
 function renderProductDetail(product) {
   const container = document.getElementById('productDetailContent');
   
-  // Get images
   let images = [];
   if (product.images && product.images.length > 0) {
-    images = product.images;
+    images = product.images.slice(0, 5);
   } else if (product.img) {
     images = [product.img];
   } else {
@@ -112,97 +74,126 @@ function renderProductDetail(product) {
   const specs = product.specifications || {};
   
   container.innerHTML = `
-    <div class="detail-container">
-      <!-- Image Gallery -->
+    <div class="detail-container" style="margin-top:0;">
+      <!-- Left - Image Gallery -->
       <div>
         <div class="detail-main-img" id="mainImg">
-          ${renderImage(images[0])}
+          ${renderImg(images[0], '100%', '100%', 'contain')}
         </div>
-        ${images.length > 1 ? `
-        <div class="detail-thumbs" style="margin-top:8px;">
+        <div class="detail-thumbs">
           ${images.map((img, i) => `
-            <div class="detail-thumb ${i===0?'active':''}" onclick="switchImage('${String(img).replace(/'/g, "\\'")}', this)">
-              ${renderImage(img)}
+            <div class="detail-thumb ${i===0?'active':''}" onclick="changeImg('${escapeHtml(img)}', this)">
+              ${renderImg(img, '100%', '100%', 'cover')}
             </div>
           `).join('')}
         </div>
-        ` : ''}
+        <p style="font-size:11px;color:#999;margin-top:6px;">${images.length} image${images.length>1?'s':''}</p>
       </div>
       
-      <!-- Product Info -->
+      <!-- Right - Product Info -->
       <div>
-        <h1 style="font-size:20px;font-weight:600;color:#333;margin-bottom:10px;line-height:1.4;">${product.title || 'No Title'}</h1>
+        <h1 style="font-size:18px;font-weight:600;color:#333;margin-bottom:8px;line-height:1.4;">${product.title}</h1>
         
-        <div style="display:flex;align-items:baseline;gap:10px;background:#fef2f2;padding:12px;border-radius:4px;margin:10px 0;">
-          <span style="font-size:24px;font-weight:700;color:#E31E24;">${product.price || 'Contact for Price'}</span>
+        <div style="display:flex;align-items:center;gap:10px;margin:10px 0;padding:12px;background:#fef2f2;border-radius:4px;">
+          <span style="font-size:24px;font-weight:700;color:#E31E24;">${product.price || 'Contact'}</span>
           <span style="font-size:13px;color:#666;">/ ${product.moq || 'Flexible MOQ'}</span>
         </div>
         
         <div style="font-size:13px;color:#666;margin:8px 0;">
-          <span style="color:#f59e0b;">★</span> ${product.rating || '4.5'} | ${product.reviews || 0} reviews | ${Math.floor((product.reviews || 0) * 1.5)} orders
+          <span style="color:#f59e0b;">${'★'.repeat(Math.floor(product.rating||0))}${(product.rating||0)%1>=0.5?'½':''}</span>
+          <strong>${product.rating||'4.5'}</strong> 
+          <span>(${product.reviews||0} reviews | ${Math.floor((product.reviews||0)*1.5)} orders)</span>
         </div>
         
         <div style="display:flex;gap:10px;margin:15px 0;flex-wrap:wrap;">
-          <button class="btn btn-orange" onclick="contactSupplier()" style="flex:1;min-width:150px;padding:12px;">
+          <button class="btn btn-orange btn-lg" onclick="contactSupplier()" style="flex:1;min-width:160px;">
             <i class="fab fa-whatsapp"></i> Contact Supplier
           </button>
-          <button class="btn btn-red" onclick="startOrder()" style="flex:1;min-width:150px;padding:12px;">
+          <button class="btn btn-red btn-lg" onclick="startOrder()" style="flex:1;min-width:160px;">
             <i class="fas fa-shopping-cart"></i> Start Order
           </button>
         </div>
         
-        <div style="background:#f0f9ff;border:1px solid #bae6fd;padding:12px;border-radius:4px;margin:10px 0;">
-          <p style="font-weight:600;color:#0369a1;margin-bottom:4px;"><i class="fas fa-store"></i> ${product.supplier || 'Verified Supplier'}</p>
-          <p style="font-size:12px;color:#666;margin:2px 0;"><i class="fas fa-check-circle" style="color:#10b981;"></i> Verified Supplier</p>
-          <p style="font-size:12px;color:#666;margin:2px 0;"><i class="fas fa-truck"></i> Shipping: ${product.shipping || 'Worldwide Delivery'}</p>
+        <!-- Supplier Info -->
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:4px;padding:12px;margin:12px 0;">
+          <p style="font-size:14px;font-weight:600;color:#0369a1;margin-bottom:4px;">
+            <i class="fas fa-store"></i> ${product.supplier || 'Verified Supplier'}
+          </p>
+          <p style="font-size:12px;color:#666;margin:2px 0;">
+            <i class="fas fa-check-circle" style="color:#10b981;"></i> Verified Supplier
+          </p>
+          <p style="font-size:12px;color:#666;margin:2px 0;">
+            <i class="fas fa-truck"></i> Shipping: ${product.shipping || 'Worldwide Delivery'}
+          </p>
+          <p style="font-size:12px;color:#666;margin:2px 0;">
+            <i class="fas fa-shield-alt"></i> Trade Assurance: 100% Product Quality Protection
+          </p>
         </div>
         
+        <!-- Bulk Pricing Table -->
         ${bulkPrices.length > 0 ? `
-        <div style="margin:15px 0;">
-          <h4 style="font-size:14px;border-bottom:2px solid #e8e8e8;padding-bottom:5px;margin-bottom:8px;">📊 Bulk Pricing</h4>
-          <table style="width:100%;border-collapse:collapse;font-size:13px;">
-            <thead><tr style="background:#f5f5f5;"><th style="padding:8px;text-align:left;border:1px solid #eee;">Quantity</th><th style="padding:8px;text-align:left;border:1px solid #eee;">Unit Price</th></tr></thead>
-            <tbody>
-              ${bulkPrices.map(bp => `<tr><td style="padding:8px;border:1px solid #eee;">${bp.qty}</td><td style="padding:8px;border:1px solid #eee;font-weight:700;color:#E31E24;">${bp.price}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-        ` : ''}
-        
-        ${Object.keys(specs).length > 0 ? `
-        <div style="margin:15px 0;">
-          <h4 style="font-size:14px;border-bottom:2px solid #e8e8e8;padding-bottom:5px;margin-bottom:8px;">📋 Specifications</h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:13px;">
-            ${Object.entries(specs).map(([k,v]) => `
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;">
-                <span style="color:#999;">${k}</span>
-                <span style="font-weight:500;">${v}</span>
-              </div>
-            `).join('')}
+          <div style="margin:15px 0;">
+            <h4 style="font-size:14px;font-weight:600;color:#333;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #e8e8e8;">
+              <i class="fas fa-table"></i> Bulk Pricing
+            </h4>
+            <table class="bulk-table">
+              <thead><tr><th>Quantity Range</th><th>Unit Price</th></tr></thead>
+              <tbody>
+                ${bulkPrices.map(bp => `<tr><td>${bp.qty}</td><td><strong>${bp.price}</strong></td></tr>`).join('')}
+              </tbody>
+            </table>
           </div>
-        </div>
         ` : ''}
         
+        <!-- Specifications -->
+        ${Object.keys(specs).length > 0 ? `
+          <div style="margin:15px 0;">
+            <h4 style="font-size:14px;font-weight:600;color:#333;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #e8e8e8;">
+              <i class="fas fa-clipboard-list"></i> Specifications
+            </h4>
+            <div class="spec-list">
+              ${Object.entries(specs).map(([k,v]) => `
+                <div><span>${k}</span><span style="font-weight:500;">${v}</span></div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+        
+        <!-- Description -->
         <div style="margin:15px 0;">
-          <h4 style="font-size:14px;border-bottom:2px solid #e8e8e8;padding-bottom:5px;margin-bottom:8px;">📝 Description</h4>
-          <p style="font-size:13px;color:#666;line-height:1.6;">${product.desc || 'No description available. Contact supplier for more details.'}</p>
+          <h4 style="font-size:14px;font-weight:600;color:#333;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #e8e8e8;">
+            <i class="fas fa-file-alt"></i> Product Description
+          </h4>
+          <p style="font-size:13px;color:#666;line-height:1.7;">${product.desc || 'Premium quality wholesale product. Contact supplier for more details and sample requests.'}</p>
+        </div>
+        
+        <!-- Tags -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:15px;">
+          <span style="background:#f5f5f5;padding:4px 10px;border-radius:3px;font-size:11px;color:#666;">${product.category || 'General'}</span>
+          <span style="background:#f5f5f5;padding:4px 10px;border-radius:3px;font-size:11px;color:#666;">Wholesale</span>
+          <span style="background:#f5f5f5;padding:4px 10px;border-radius:3px;font-size:11px;color:#666;">Bulk Order</span>
+          <span style="background:#fef3c7;padding:4px 10px;border-radius:3px;font-size:11px;color:#92400e;">Trade Assurance</span>
         </div>
       </div>
     </div>
   `;
 }
 
-function renderImage(img) {
+function renderImg(img, w, h, fit) {
   if (!img) return '📦';
-  if (String(img).startsWith('http')) {
-    return `<img src="${img}" style="width:100%;height:100%;object-fit:contain;" alt="Product" onerror="this.innerHTML='📦'">`;
+  if (img.startsWith('http')) {
+    return `<img src="${img}" style="width:${w};height:${h};object-fit:${fit};" alt="Product" onerror="this.parentElement.innerHTML='<span style=font-size:3rem>📦</span>'">`;
   }
   return `<span style="font-size:3rem;">${img}</span>`;
 }
 
-function switchImage(img, el) {
+function escapeHtml(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function changeImg(img, el) {
   const mainImg = document.getElementById('mainImg');
-  if (String(img).startsWith('http')) {
+  if (img.startsWith('http')) {
     mainImg.innerHTML = `<img src="${img}" style="width:100%;height:100%;object-fit:contain;" alt="Product">`;
   } else {
     mainImg.innerHTML = `<span style="font-size:5rem;">${img}</span>`;
@@ -212,54 +203,59 @@ function switchImage(img, el) {
 }
 
 function contactSupplier() {
-  if (!currentProduct) return alert('Product not loaded');
+  if (!currentProduct) return;
   const phone = '15551234567';
-  const msg = `Hi, I'm interested in:\n\n📦 Product: ${currentProduct.title}\n💰 Price: ${currentProduct.price}\n📦 MOQ: ${currentProduct.moq}\n\nPlease send more details.`;
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-function startOrder() {
-  if (!currentProduct) return alert('Product not loaded');
+  const msg = `Hi, I'm interested in:\n\n📦 Product: ${currentProduct.title}\n💰 Price: ${currentProduct.price}\n📦 MOQ: ${currentProduct.moq}\n\nPlease send me:\n- Best bulk price\n- Shipping cost\n- Sample availability\n\nThank you!`;
   database.ref('orders').push({
     productId: currentProduct.id,
     productTitle: currentProduct.title,
     status: 'new',
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function startOrder() {
+  if (!currentProduct) return;
+  database.ref('orders').push({
+    productId: currentProduct.id,
+    productTitle: currentProduct.title,
+    userEmail: currentUser?.email || 'guest',
+    status: 'new',
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
   contactSupplier();
 }
 
-function loadRelatedProducts(product) {
-  if (!product || !product.category) return;
-  
-  database.ref('products').orderByChild('category').equalTo(product.category).once('value')
-    .then(snapshot => {
-      const data = snapshot.val();
-      const related = data ? Object.values(data).filter(p => String(p.id) !== String(product.id)).slice(0, 4) : [];
-      const grid = document.getElementById('relatedProducts');
-      if (!grid) return;
-      
-      if (related.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:20px;">No related products found</p>';
-        return;
-      }
-      
-      grid.innerHTML = related.map(p => `
-        <div class="product-card" onclick="location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
-          <div class="product-img">
-            ${(p.img && String(p.img).startsWith('http')) ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;" alt="${p.title}">` : (p.img || '📦')}
-          </div>
-          <div class="product-info">
-            <div class="product-title">${p.title}</div>
-            <div class="price-range">${p.price || 'Contact'}</div>
-            <button class="btn btn-red btn-full" onclick="event.stopPropagation();location.href='product-detail.html?id=${p.id}'">View Details</button>
-          </div>
+function loadRelatedProducts(category, currentId) {
+  database.ref('products').orderByChild('category').equalTo(category).once('value').then(snapshot => {
+    const data = snapshot.val();
+    const related = data ? Object.values(data).filter(p => p.id !== parseInt(currentId)).slice(0, 4) : [];
+    const grid = document.getElementById('relatedProducts');
+    if (!grid) return;
+    
+    if (related.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:2rem;">No related products</p>';
+      return;
+    }
+    
+    grid.innerHTML = related.map(p => `
+      <div class="product-card" onclick="location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
+        <div class="product-img">
+          ${(p.img&&p.img.startsWith('http')) ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;" alt="${p.title}">` : (p.img || '📦')}
         </div>
-      `).join('');
-    });
+        <div class="product-info">
+          <div class="product-title">${p.title}</div>
+          <div class="price-range">${p.price || 'Contact'}</div>
+          <div class="rating"><i class="fas fa-star"></i> ${p.rating||'4.5'} | ${p.reviews||0} orders</div>
+          <button class="btn btn-red btn-full" onclick="event.stopPropagation();location.href='product-detail.html?id=${p.id}'" style="margin-top:5px;">View Details</button>
+        </div>
+      </div>
+    `).join('');
+  });
 }
 
-// Auth functions
+// Auth & Modal
 window.openModal = function(id) { document.getElementById(id).classList.add('active'); };
 window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); };
 window.loginWithEmail = function() {
@@ -278,26 +274,30 @@ window.signupWithEmail = function() {
 };
 window.loginWithGoogle = function() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>closeModal('loginModal')).catch(()=>{}); };
 window.signupWithGoogle = function() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>closeModal('signupModal')).catch(()=>{}); };
-window.logout = function() { auth.signOut().then(()=>location.reload()); };
-window.switchImage = switchImage;
+window.logout = function() { auth.signOut().then(() => location.reload()); };
+window.changeImg = changeImg;
 window.contactSupplier = contactSupplier;
 window.startOrder = startOrder;
 
-// Hamburger menu
+// Hamburger
 document.getElementById('hamburgerBtn')?.addEventListener('click', () => {
-  document.querySelector('.category-nav-links')?.classList.toggle('show');
+  document.querySelector('.category-nav-links').classList.toggle('show');
 });
 
-// Nav search
+// Search
 document.getElementById('navSearchBtn')?.addEventListener('click', () => {
   const q = document.getElementById('navSearch').value.trim();
   if(q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
 });
+document.getElementById('navSearch')?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const q = e.target.value.trim();
+    if(q) window.location.href = 'products.html?search=' + encodeURIComponent(q);
+  }
+});
 
 // Close modals
-document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', function(e) {
-  if(e.target === this) this.classList.remove('active');
-}));
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', function(e) { if(e.target === this) this.classList.remove('active'); }));
 
-// Start loading
+// Init
 document.addEventListener('DOMContentLoaded', loadProductDetail);
