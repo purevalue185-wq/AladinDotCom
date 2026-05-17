@@ -1,4 +1,3 @@
-/* Admin Dashboard Styles */
 * {
   margin: 0;
   padding: 0;
@@ -31,13 +30,11 @@ body {
   color: var(--gray-800);
 }
 
-/* Admin Layout */
 .admin-container {
   display: flex;
   min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 260px;
   background: var(--primary);
@@ -107,14 +104,12 @@ body {
   width: 20px;
 }
 
-/* Main Content */
 .main-content {
   flex: 1;
   margin-left: 260px;
   padding: 0;
 }
 
-/* Topbar */
 .topbar {
   background: white;
   padding: 1rem 2rem;
@@ -136,53 +131,6 @@ body {
   color: var(--gray-800);
 }
 
-.topbar-search {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--gray-100);
-  border-radius: 2rem;
-  padding: 0.4rem 1rem;
-  max-width: 400px;
-}
-
-.topbar-search input {
-  border: none;
-  background: transparent;
-  padding: 0.5rem;
-  flex: 1;
-  outline: none;
-}
-
-.topbar-search button {
-  background: none;
-  border: none;
-  color: var(--gray-600);
-  cursor: pointer;
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.btn-icon {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  color: var(--gray-600);
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: var(--transition);
-}
-
-.btn-icon:hover {
-  background: var(--gray-100);
-}
-
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -222,16 +170,11 @@ body {
   color: white;
 }
 
-.btn-danger:hover {
-  background: #dc2626;
-}
-
 .btn-large {
   padding: 0.8rem 2rem;
   font-size: 1rem;
 }
 
-/* Page Content */
 .page-content {
   display: none;
   padding: 2rem;
@@ -241,20 +184,12 @@ body {
   display: block;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
 h1 {
   font-size: 1.8rem;
   color: var(--primary);
   margin-bottom: 1.5rem;
 }
 
-/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -294,7 +229,6 @@ h1 {
   font-size: 0.9rem;
 }
 
-/* Admin Table */
 .table-responsive {
   overflow-x: auto;
   background: white;
@@ -325,18 +259,6 @@ h1 {
   background: var(--gray-50);
 }
 
-.action-btns {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-sm {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.8rem;
-  border-radius: 1.5rem;
-}
-
-/* Product Form */
 .product-form {
   background: white;
   padding: 2rem;
@@ -390,7 +312,63 @@ h1 {
   margin-top: 2rem;
 }
 
-/* Modal */
+.dynamic-section {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dynamic-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.dynamic-row input {
+  flex: 1;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.btn-add {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-add:hover {
+  background: #059669;
+}
+
+.btn-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  background: #dc2626;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -422,53 +400,31 @@ h1 {
   margin-top: 1.5rem;
 }
 
-/* Settings */
-.settings-form {
-  background: white;
-  padding: 2rem;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  max-width: 600px;
-}
-
-.settings-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
   }
-
   .sidebar.open {
     transform: translateX(0);
   }
-
   .sidebar-toggle {
     display: block;
   }
-
   .main-content {
     margin-left: 0;
   }
-
   .menu-toggle {
     display: block;
   }
-
   .topbar {
     padding: 1rem;
   }
-
   .page-content {
     padding: 1rem;
   }
-
   .stats-grid {
     grid-template-columns: 1fr;
   }
-
   .form-grid {
     grid-template-columns: 1fr;
   }
